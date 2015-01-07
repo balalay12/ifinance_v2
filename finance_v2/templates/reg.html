@@ -1,0 +1,17 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<script src="{% static "js/angular.js" %}" type="text/javascript"></script>
+	<script src="{% static "js/controllers.js" %}" type="text/javascript"></script>
+</head>
+<body ng-app="reg_app">
+	<form ng-controller="RegFormController" name="reg_form">
+		<input ng-model="user.username" ng-model-options="{ getterSetter: true}" /><br />
+		<input ng-model="user.password" ng-model-options="{ getterSetter: true}" />
+		<button ng-click="submit()">Submit</button>		
+	</form>
+</body>
+</html>

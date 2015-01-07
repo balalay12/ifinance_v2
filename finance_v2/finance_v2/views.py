@@ -6,5 +6,5 @@ class Reg(TemplateView):
 	template_name = 'reg.html'
 
 	def post(self, request, *args, **kwargs):
-		print(request)
+		print(request.is_ajax())
 

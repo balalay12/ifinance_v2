@@ -9,6 +9,7 @@
 </head>
 <body ng-app="reg_app">
 	<form ng-controller="RegFormController" name="reg_form">
+        {% csrf_token %}
 		<input ng-model="user.username" ng-model-options="{ getterSetter: true}" /><br />
 		<input ng-model="user.password" ng-model-options="{ getterSetter: true}" />
 		<button ng-click="submit()">Submit</button>		

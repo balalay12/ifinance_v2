@@ -1,18 +1,18 @@
-{% load staticfiles %}
+{% extends "base.html" %}
 
-<!DOCTYPE html>
-<html>
-<head>
-	<title></title>
-	<script src="{% static "js/angular.js" %}" type="text/javascript"></script>
-	<script src="{% static "js/controllers.js" %}" type="text/javascript"></script>
-</head>
+{% block content %}
 <body ng-app="reg_app">
 	<form ng-controller="RegFormController" name="reg_form">
         {% csrf_token %}
-		<input ng-model="user.username" ng-model-options="{ getterSetter: true}" /><br />
-		<input ng-model="user.password" ng-model-options="{ getterSetter: true}" />
+        Username:
+		<input ng-model="user.username" /><br />
+		Email:
+		<input ng-model="user.em" /><br />
+		Password:
+		<input ng-model="user.password" />
 		<button ng-click="submit()">Submit</button>		
 	</form>
+
+{% endblock %}
 </body>
 </html>

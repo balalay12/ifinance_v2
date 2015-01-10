@@ -7,7 +7,7 @@ urlpatterns = patterns('',
     # url(r'^$', 'finance_v2.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
 
-    url(r'^$', views.Reg.as_view(), name='reg'),
+    url(r'^$', views.Main.as_view(), name='main'),
     url(r'^reg/$', views.Reg.as_view(), name='reg'),
     url(r'^admin/', include(admin.site.urls)),
 )

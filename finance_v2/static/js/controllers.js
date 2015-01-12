@@ -1,16 +1,15 @@
 var app = angular.module('reg_app', ['ngRoute']);
 
 app.config(['$httpProvider', function($httpProvider) {
-	$httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 	$httpProvider.defaults.xsrfCookieName = 'csrftoken';
     $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
 }]);
 
-app.config(['$routeProvider', fucntion($routeProvider) {
+app.config(['$routeProvider', function($routeProvider) {
 	$routeProvider
-		.when('/', {
-			templateUtl: '../base.html'
-		})
+		.when('', {
+			templateUtl: '../templates/base.html'
+		});
 }]);
 
 app.controller('RegFormController', ['$scope', '$http', function($scope, $http) {

@@ -6,10 +6,14 @@ app.config(['$httpProvider', function($httpProvider) {
     $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
 }]);
 
-app.config(['$routeProvider', fucntion($routeProvider) {
+app.config(['$routeProvider', function($routeProvider) {
 	$routeProvider
-		.when('/', {
+		.when('', {
 			templateUtl: '../base.html'
+		})
+		.when('/reg', {
+		    templateUtl: 'd:/coding/python/ifinance_v2/finance_v2/templates/reg.html',
+		    controller: 'RegFormController'
 		})
 }]);
 

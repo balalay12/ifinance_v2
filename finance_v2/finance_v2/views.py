@@ -6,7 +6,6 @@ from django.views.generic import TemplateView, View
 from django.contrib.auth.models import User
 
 class Main(View):
-
 	def get_context_data(self, **kwargs):
 		context = super(Main, self).get_context_data(**kwargs)
 		context['usertest'] = 'testval'
@@ -22,5 +21,4 @@ class Reg(TemplateView):
 		return HttpResponse()
 
 class Login(TemplateView):
-	template_name = 'ligin.html'
-		
+	template_name = 'login.html'

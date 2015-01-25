@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
-from finance_v2 import views
+import views
 
 urlpatterns = patterns('',
     # Examples:

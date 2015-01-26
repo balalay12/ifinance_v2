@@ -23,7 +23,16 @@ app.config(function($routeProvider) {
     $routeProvider.otherwise({redirectTo: '/'});
 });
 
-app.controller('MainController', function($scope) {});
+app.controller('MainController', ['$scope', '$http', '$location', function($scope, $http, $location) {
+    $http.post('/')
+        .success(function(data, status) {
+            console.log('status -> OK -> ' + status);
+        })
+        .error(function(data, status) {
+            console.log('status -> NOT_OK -> ' + status);
+            $location.path("/reg");
+        })
+}]);
 
 app.controller('RegFormController', ['$scope', '$http', function($scope, $http) {
 	$scope.submit = function() {

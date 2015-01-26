@@ -9,11 +9,8 @@ from django.contrib.auth.models import User
 class Main(TemplateView):
     template_name = 'base.html'
 
-    def get_context_data(self, **kwargs):
-        context = super(Main, self).get_context_data(**kwargs)
-        context['usertest'] = 'testval'
-        return context
-
+    def post(self, request, *args, **kwargs):
+        return HttpResponse(status=200)
 
 class Reg(View):
     # template_name = 'base.html'

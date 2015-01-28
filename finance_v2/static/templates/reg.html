@@ -2,17 +2,17 @@
     <form ng-controller="RegFormController" name="reg_form">
         <div class="large-12 columns">
             <label>Логин:
-                <input ng-model="user.username" type="text" placeholder="Введите имя пользователя" />
+                <input ng-model="reg.username" type="text" placeholder="Введите имя пользователя" />
             </label>
         </div>
         <div class="large-12 columns">
             <label>Адрес электронной почты:
-                <input ng-model="user.email" type="text" placeholder="Введите адрес Вашей электронной почты" />
+                <input ng-model="reg.email" type="text" placeholder="Введите адрес Вашей электронной почты" />
             </label>
         </div>
         <div class="large-12 columns">
             <label>Пароль:
-                <input ng-model="user.password" type="text" placeholder="Введите пароль" />
+                <input ng-model="reg.password" type="text" placeholder="Введите пароль" />
             </label>
         </div>
 		<button class="button success right" ng-click="submit()">Регистрация</button>

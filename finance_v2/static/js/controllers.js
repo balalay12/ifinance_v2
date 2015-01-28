@@ -20,6 +20,10 @@ app.config(function($routeProvider) {
         templateUrl: 'static/templates/reg.html',
         controller: 'RegFormController'
     });
+    $routeProvider.when('/login/', {
+        templateUrl: 'static/templates/login.html',
+        controller: 'LoginFormController'
+    });
     $routeProvider.otherwise({redirectTo: '/'});
 });
 
@@ -27,16 +31,18 @@ app.controller('MainController', ['$scope', '$http', '$location', function($scop
     $http.post('/')
         .success(function(data, status) {
             console.log('status -> OK -> ' + status);
+            console.log('DATA -> ' + data);
+            $scope.data = data;
         })
         .error(function(data, status) {
             console.log('status -> NOT_OK -> ' + status);
-            $location.path("/reg");
-        })
+            $location.path("/login");
+        });
 }]);
 
 app.controller('RegFormController', ['$scope', '$http', function($scope, $http) {
 	$scope.submit = function() {
-		var in_data = {user: $scope.user};
+		var in_data = {reg: $scope.reg};
 		console.log(in_data);
 		$http.post('/reg/', angular.toJson(in_data))
 			.success(function(data, status) {
@@ -46,4 +52,18 @@ app.controller('RegFormController', ['$scope', '$http', function($scope, $http) 
 				console.log("Not ok " + data);
 			});
 	};
+}]);
+
+app.controller('LoginFormController', ['$scope', '$http', '$location', function($scope, $http, $location) {
+    $scope.submit = function() {
+        var in_data = {login: $scope.login};
+        $http.post('/login/', angular.toJson(in_data))
+            .success(function(data, status) {
+                console.log(data + status);
+                $location.path("/main");
+            })
+            .error(function(data, status) {
+                console.log(data + status);
+            });
+    };
 }]);

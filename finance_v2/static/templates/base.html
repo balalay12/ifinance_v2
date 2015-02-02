@@ -24,8 +24,9 @@
             <li class="toggle-topbar menu-icon">
                 <a href="#"><span>Menu</span></a>
             </li>
-        </ul> <section class="top-bar-section">
-
+        </ul>
+        
+        <section class="top-bar-section">
         <!-- Left Nav Section -->
         <ul class="left">
             <li>
@@ -34,6 +35,9 @@
         </ul>
 
         <ul class="right">
+            <li ng-if="data.name">
+                <a href="#">Регистрация</a>
+            </li>
             <li>
                 <a href="#/reg">Регистрация</a>
             </li>

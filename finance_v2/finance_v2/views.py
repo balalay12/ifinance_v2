@@ -3,10 +3,10 @@
 import json
 from django.http import HttpResponse
 from django.views.generic import TemplateView, View
-from django.core.exceptions import ObjectDoesNotExist
-from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login
+from models import Categorys
+from django.contrib.auth import login
 import forms
+from django.core import serializers
 
 
 class Base(View):
@@ -25,34 +25,28 @@ class Base(View):
 
 
 class Reg(View):
+
     def post(self, request, *args, **kwargs):
         in_data = json.loads(request.body)
         user_data = in_data['reg']
-        # TO DO: сделать проверку логина, если существует выдавать ошибку
-        try:
-            User.objects.create_user(user_data['username'], user_data['email'], user_data['password'])
-            return HttpResponse()
-        except ObjectDoesNotExist:
-            return HttpResponse(status=405)
 
-    def get_context_data(self, **kwargs):
-        context = super(Reg, self).get_context_data(**kwargs)
-        context['usertest'] = 'testval'
-        return context
+        _data = {}
+        for k in user_data:
+            _data[k] = user_data[k]
+
+        form = forms.Reg(_data)
+        if form.is_valid():
+            form.save()
+            return HttpResponse()
+        else:
+            return HttpResponse('USER CREATION ERROR', status='403')
 
 
 class Login(View):
 
     def post(self, request, *args, **kwargs):
         in_data = json.loads(request.body)
-        login_data = in_data['login']
-
-        _data = {}
-        for k in login_data:
-            _data[k] = login_data[k]
-        print _data
-
-        form = forms.Login(_data)
+        form = forms.Login(in_data['login'])
         if form.is_valid():
             if form.get_user():
                 login(request, form.get_user())
@@ -68,14 +62,23 @@ class Main(TemplateView):
 
     def post(self, request, *args, **kwargs):
         if request.user.is_authenticated():
-
-            _data = {}
-            for k in request.POST:
-                _data[k] = request.POST[k]
-            print _data
-
             data = {}
             data['name'] = request.user.username
             return HttpResponse(json.dumps(data), content_type='application/json')
         else:
             return HttpResponse('Login Error', status='403')
+
+
+class Create(View):
+    def post(self, request, *args, **kwargs):
+        if len(request.body) == 0:
+            data = Categorys.objects.all()
+            out_data = serializers.serialize('json', list(data))
+            return HttpResponse(out_data)
+        else:
+            _data = json.loads(request.body)
+            form = forms.Create(_data['add'])
+            if form.is_valid():
+                form.save(request.user.id)
+                return HttpResponse()
+            return HttpResponse('CREATE ERROR', status=405)

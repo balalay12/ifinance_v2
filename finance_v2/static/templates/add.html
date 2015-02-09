@@ -1,0 +1,27 @@
+<div class="large-12 columns">
+    <form ng-controller="CreateFormController" name="create_form">
+        <div class="large-12 columns" id="dp1">
+            <label>Дата:
+                <input ng-model="add.date" type="text" placeholder="Введите дату" id="date" name="date" />
+            </label>
+        </div>
+        <div class="large-12 columns">
+            <label>Введите сумму:
+                <input ng-model="add.money" type="text" placeholder="Введите сумму" />
+            </label>
+        </div>
+        <div class="large-12 columns">
+            <label>Описание:
+                <input ng-model="add.comment" type="text" placeholder="Введите описание" />
+            </label>
+        </div>
+        <div class="large-12 columns">
+            <label>Выберите категорию
+                <select ng-model="add.category">
+                  <option ng-repeat="item in data" value="{$ item.fields['operation_type'] $}">{$ item.fields['name'] $}</option>
+                </select>
+            </label>
+        </div>
+		<button class="button success right" ng-click="submit()">Добавить запись</button>
+	</form>
+</div>

@@ -10,5 +10,6 @@ urlpatterns = patterns('',
     url(r'^$', views.Main.as_view(), name='main'),
     url(r'^reg/$', views.Reg.as_view(), name='reg'),
     url(r'^login/$', views.Login.as_view(), name='login'),
+    url(r'^add/$', views.Create.as_view(), name='add'),
     url(r'^admin/', include(admin.site.urls)),
 )

@@ -35,7 +35,13 @@
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li>
+                        <span>{$ data.name $}</span>
+                    </li>
+                    <li ng-if="!!data.name">
                         <a href="#/reg">Регистрация</a>
+                    </li>
+                    <li ng-if="!data.name">
+                        <a href="#/logout">Выход</a>
                     </li>
                 </ul>
             </div>

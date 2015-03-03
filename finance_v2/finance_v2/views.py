@@ -4,7 +4,7 @@ import json
 from django.http import HttpResponse
 from django.views.generic import TemplateView, View
 from models import Categorys
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 import forms
 from django.core import serializers
 
@@ -55,6 +55,11 @@ class Login(View):
                 return HttpResponse('Login Error', status='403')
         else:
             return HttpResponse('Login Error', status='403')
+
+
+class Logout(View):
+    def get(self, request):
+        logout(request)
 
 
 class Main(TemplateView):

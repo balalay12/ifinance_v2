@@ -11,5 +11,6 @@ urlpatterns = patterns('',
     url(r'^reg/$', views.Reg.as_view(), name='reg'),
     url(r'^login/$', views.Login.as_view(), name='login'),
     url(r'^add/$', views.Create.as_view(), name='add'),
+    url(r'^logout/$', views.Logout.as_view(), name='logout'),
     url(r'^admin/', include(admin.site.urls)),
 )

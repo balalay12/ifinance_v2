@@ -6,7 +6,6 @@ app.config(function($interpolateProvider) {
 });
 
 app.config(['$httpProvider', function($httpProvider) {
-	$httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 	$httpProvider.defaults.xsrfCookieName = 'csrftoken';
     $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
 }]);
@@ -27,6 +26,10 @@ app.config(function($routeProvider) {
     $routeProvider.when('/add/', {
         templateUrl: 'static/templates/add.html',
         controller: 'CreateFormController'
+    });
+    $routeProvider.when('/logout/', {
+//        templateUrl: 'static/templates/login.html',
+        controller: 'LogoutController'
     });
     $routeProvider.otherwise({redirectTo: '/'});
 });
@@ -97,4 +100,15 @@ app.controller('CreateFormController', ['$scope', '$http', '$location', function
                 console.log(data + status);
             });
     };
+}]);
+
+app.controller('LogoutController', ['$http', '$location', function($location) {
+    $http.get('/logout/')
+        .success(function(status) {
+            console.log(status)
+            $location.path('/login');
+        })
+        .error(function(data, status) {
+            console.log('error')
+        });
 }]);

@@ -9,23 +9,22 @@ import forms
 from django.core import serializers
 
 
-class Base(View):
-    form_class = None
-
-    def create(self, request):
-        if self.form_class is None:
-            return HttpResponse('Error', status=405)
-        form = self.form_class()
-
-    def update(self):
-        pass
-
-    def delete(self):
-        pass
+# class Base(View):
+#     form_class = None
+#
+#     def create(self, request):
+#         if self.form_class is None:
+#             return HttpResponse('Error', status=405)
+#         form = self.form_class()
+#
+#     def update(self):
+#         pass
+#
+#     def delete(self):
+#         pass
 
 
 class Reg(View):
-
     def post(self, request, *args, **kwargs):
         in_data = json.loads(request.body)
         user_data = in_data['reg']
@@ -43,20 +42,22 @@ class Reg(View):
 
 
 class Login(View):
-
-    def post(self, request, *args, **kwargs):
+    def post(self, request):
+        print(request.body)
         in_data = json.loads(request.body)
+        print(in_data)
         form = forms.Login(in_data['login'])
         if form.is_valid():
             if form.get_user():
                 login(request, form.get_user())
                 return HttpResponse()
             else:
-                return HttpResponse('Login Error', status='403')
+                return HttpResponse('Login Error', status=405)
         else:
-            return HttpResponse('Login Error', status='403')
+            return HttpResponse('Login Error', status=405)
 
 
+# сделать нормальный logout
 class Logout(View):
     def get(self, request):
         logout(request)

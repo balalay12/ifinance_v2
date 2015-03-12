@@ -1,4 +1,4 @@
-var app = angular.module('app', ['ngRoute']);
+var app = angular.module('app', ['ngRoute', 'ngCookies']);
 
 app.config(function($interpolateProvider) {
     $interpolateProvider.startSymbol('{$');
@@ -8,6 +8,8 @@ app.config(function($interpolateProvider) {
 app.config(['$httpProvider', function($httpProvider) {
 	$httpProvider.defaults.xsrfCookieName = 'csrftoken';
     $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
+    $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+    $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 }]);
 
 app.config(function($routeProvider) {
@@ -37,12 +39,12 @@ app.config(function($routeProvider) {
 app.controller('MainController', ['$scope', '$http', '$location', function($scope, $http, $location) {
     $http.post('/')
         .success(function(data, status) {
-            console.log('status -> OK -> ' + status);
+            console.log('MAIN PAGE -> OK -> ' + status);
             console.log('DATA -> ' + data);
             $scope.data = data;
         })
         .error(function(data, status) {
-            console.log('status -> NOT_OK -> ' + status);
+            console.log('MAIN PAGE -> NOT_OK -> ' + status);
             $location.path("/login");
         });
 }]);
@@ -65,14 +67,22 @@ app.controller('RegFormController', ['$scope', '$http', '$location', function($s
 app.controller('LoginFormController', ['$scope', '$http', '$location', function($scope, $http, $location) {
     $scope.submit = function() {
         var in_data = {login: $scope.login};
-        $http.post('/login/', angular.toJson(in_data))
-            .success(function(data, status) {
-                console.log(data + status);
-                $location.path("/main");
-            })
-            .error(function(data, status) {
-                console.log(data + status);
-            });
+        console.log('data =>' + in_data)
+        console.log('$.param =? ' + $.param(in_data))
+        $http(
+            {
+                method: 'POST',
+                url: '/login/',
+                data: in_data
+            }
+        )
+        .success(function(data, status) {
+            console.log(data + status);
+            $location.path("/");
+        })
+        .error(function(data, status) {
+            console.log(data + status);
+        });
     };
 }]);
 

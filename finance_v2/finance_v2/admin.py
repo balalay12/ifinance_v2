@@ -1,5 +1,5 @@
 from django.contrib import admin
-from models import Categorys, Operations
+from .models import Categorys, Operations
 
 
 class CategoryAdmin(admin.ModelAdmin):

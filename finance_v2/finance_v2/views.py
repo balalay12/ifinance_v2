@@ -43,24 +43,16 @@ class Reg(View):
 
 class Login(View):
     def post(self, request):
-        print(request.body)
         in_data = json.loads(request.body)
-        print(in_data)
         form = forms.Login(in_data['login'])
         if form.is_valid():
             if form.get_user():
                 login(request, form.get_user())
                 return HttpResponse()
             else:
-                return HttpResponse('Login Error', status=405)
+                return HttpResponse('User not found', status=405)
         else:
-            return HttpResponse('Login Error', status=405)
-
-
-# сделать нормальный logout
-class Logout(View):
-    def get(self, request):
-        logout(request)
+            return HttpResponse('Login Error 123', status=405)
 
 
 class Main(TemplateView):
@@ -72,7 +64,7 @@ class Main(TemplateView):
             data['name'] = request.user.username
             return HttpResponse(json.dumps(data), content_type='application/json')
         else:
-            return HttpResponse('Login Error', status='403')
+            return HttpResponse('Main Login Error', status='403')
 
 
 class Create(View):

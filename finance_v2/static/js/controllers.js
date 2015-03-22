@@ -1,4 +1,4 @@
-var app = angular.module('app', ['ngRoute', 'ngCookies']);
+var app = angular.module('app', ['ngRoute']);
 
 app.config(function($interpolateProvider) {
     $interpolateProvider.startSymbol('{$');
@@ -12,7 +12,7 @@ app.config(['$httpProvider', function($httpProvider) {
     $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 }]);
 
-app.config(function($routeProvider) {
+app.config(function($routeProvider, $locationProvider) {
     $routeProvider.when('/', {
         templateUrl: 'static/templates/main.html' ,
         controller: 'MainController'
@@ -21,7 +21,7 @@ app.config(function($routeProvider) {
         templateUrl: 'static/templates/reg.html',
         controller: 'RegFormController'
     });
-    $routeProvider.when('/login/', {
+    $routeProvider.when('/login', {
         templateUrl: 'static/templates/login.html',
         controller: 'LoginFormController'
     });
@@ -30,10 +30,12 @@ app.config(function($routeProvider) {
         controller: 'CreateFormController'
     });
     $routeProvider.when('/logout/', {
-//        templateUrl: 'static/templates/login.html',
         controller: 'LogoutController'
     });
-    $routeProvider.otherwise({redirectTo: '/'});
+    $routeProvider.otherwise(
+        {redirectTo: '/'}
+    );
+//    $locationProvider.html5Mode(true);
 });
 
 app.controller('MainController', ['$scope', '$http', '$location', function($scope, $http, $location) {
@@ -112,13 +114,6 @@ app.controller('CreateFormController', ['$scope', '$http', '$location', function
     };
 }]);
 
-app.controller('LogoutController', ['$http', '$location', function($location) {
+app.controller('LogoutController', ['$http', '$location', function($http, $location) {
     $http.get('/logout/')
-        .success(function(status) {
-            console.log(status)
-            $location.path('/login');
-        })
-        .error(function(data, status) {
-            console.log('error')
-        });
 }]);

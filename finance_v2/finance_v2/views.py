@@ -3,10 +3,17 @@
 import json
 from django.http import HttpResponse
 from django.views.generic import TemplateView, View
-from models import Categorys
-from django.contrib.auth import login, logout
+from models import Categorys, Operations
+from django.contrib.auth import login
 import forms
 from django.core import serializers
+from django.core.serializers.python import Serializer
+
+class MySerializer(Serializer):
+    def end_object(self, obj):
+        self._current['id'] = obj._get_pk_val()
+        self._current['date'] = self._current['date'].isoformat()
+        self.objects.append(self._current)
 
 
 # class Base(View):
@@ -61,6 +68,11 @@ class Main(TemplateView):
     def post(self, request, *args, **kwargs):
         if request.user.is_authenticated():
             data = {}
+            _instance = Operations.objects.filter(user=request.user.id)
+            serializer = MySerializer()
+            # data['operations'] = serializers.serialize('json', list(_instance))
+            data['operations'] = serializer.serialize(_instance)
+            print data['operations']
             data['name'] = request.user.username
             return HttpResponse(json.dumps(data), content_type='application/json')
         else:
@@ -75,6 +87,7 @@ class Create(View):
             return HttpResponse(out_data)
         else:
             _data = json.loads(request.body)
+            print _data
             form = forms.Create(_data['add'])
             if form.is_valid():
                 form.save(request.user.id)

@@ -43,7 +43,9 @@ app.controller('MainController', ['$scope', '$http', '$location', function($scop
         .success(function(data, status) {
             console.log('MAIN PAGE -> OK -> ' + status);
             console.log('DATA -> ' + data);
-            $scope.data = data;
+            $scope.name = data['name']
+            $scope.operations = data['operations']
+            console.log($scope.operations)
         })
         .error(function(data, status) {
             console.log('MAIN PAGE -> NOT_OK -> ' + status);

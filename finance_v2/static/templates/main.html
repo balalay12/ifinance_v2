@@ -1,2 +1,22 @@
 main page
-username -> {$ data.name $}
+username -> {$ name $}
+<br/>
+{$ operations $}
+<table class="table table-striped table-hover">
+    <thead>
+        <tr>
+            <th>date</th>
+            <th>money</th>
+            <th>category</th>
+            <th>comment</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="oper in operations">
+            <td>{$ oper.date $}</td>
+            <td>{$ oper.money $}</td>
+            <td>{$ oper.category $}</td>
+            <td>{$ oper.comment $}</td>
+        </tr>
+    </tbody>
+</table>

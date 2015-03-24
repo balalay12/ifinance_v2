@@ -8,7 +8,8 @@ class Categorys(models.Model):
     
     def __unicode__(self):
         return self.name
-    
+
+
 class Operations(models.Model):
     user = models.ManyToManyField('auth.User', related_name='+')
     money = models.FloatField(verbose_name=u'Сумма')

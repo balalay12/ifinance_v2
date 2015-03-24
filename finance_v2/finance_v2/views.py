@@ -9,10 +9,12 @@ import forms
 from django.core import serializers
 from django.core.serializers.python import Serializer
 
+
 class MySerializer(Serializer):
     def end_object(self, obj):
         self._current['id'] = obj._get_pk_val()
         self._current['date'] = self._current['date'].isoformat()
+        self._current['category'] = get_single_category(self._current['category'])
         self.objects.append(self._current)
 
 
@@ -70,9 +72,7 @@ class Main(TemplateView):
             data = {}
             _instance = Operations.objects.filter(user=request.user.id)
             serializer = MySerializer()
-            # data['operations'] = serializers.serialize('json', list(_instance))
             data['operations'] = serializer.serialize(_instance)
-            print data['operations']
             data['name'] = request.user.username
             return HttpResponse(json.dumps(data), content_type='application/json')
         else:
@@ -93,3 +93,7 @@ class Create(View):
                 form.save(request.user.id)
                 return HttpResponse()
             return HttpResponse('CREATE ERROR', status=405)
+
+########################################################
+def get_single_category(id):
+    return str(Categorys.objects.get(operation_type=id))

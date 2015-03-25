@@ -5,19 +5,23 @@
             <div class="form-group">
                 <label class="col-lg-2 control-label" for="inputName">Введите имя</label>
                 <div class="col-lg-10">
-                    <input class="form-control" ng-model="reg.username" type="text" id="inputName" placeholder="Введите имя пользователя"/>
+                    <input class="form-control" ng-model="reg.username" type="text" id="inputName" name="inputName" placeholder="Введите имя пользователя" required />
+                    <span ng-show="(reg_form.inputName.$dirty || submitted) && reg_form.inputName.$error.required">Поле обязательно</span>
                 </div>
             </div>
             <div class="form-group">
                 <label class="col-lg-2 control-label" for="inputEmail">Введите эл.почту</label>
                 <div class="col-lg-10">
-                    <input class="form-control" ng-model="reg.email" type="text" id="inputEmail" placeholder="Введите адрес эл.почты"/>
+                    <input class="form-control" ng-model="reg.email" type="email" id="inputEmail" name="inputEmail" placeholder="Введите адрес эл.почты" required />
+                    <span ng-show="(reg_form.inputEmail.$dirty || submitted) && reg_form.inputEmail.$error.required">Поле обязательно</span>
+                    <span ng-show="(reg_form.inputEmail.$dirty || submitted) && reg_form.inputEmail.$error.email">Введите корректный эл.адрес</span>
                 </div>
             </div>
             <div class="form-group">
                 <label class="col-lg-2 control-label" for="inputPass">Введите пароль</label>
                 <div class="col-lg-10">
-                    <input class="form-control" ng-model="reg.password" type="password" id="inputPass" placeholder="Введите пароль"/>
+                    <input class="form-control" ng-model="reg.password" type="password" id="inputPass" name="inputPass" placeholder="Введите пароль" required />
+                    <span ng-show="(reg_form.inputPass.$dirty || submitted) && reg_form.inputPass.$error.required">Поле обязательно</span>
                 </div>
             </div>
             <div class="form-group">
@@ -29,4 +33,3 @@
         </fieldset>
 	</form>
 </div>
-

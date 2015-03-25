@@ -52,6 +52,7 @@ class Reg(View):
 
 class Login(View):
     def post(self, request):
+        errors = {}
         in_data = json.loads(request.body)
         form = forms.Login(in_data['login'])
         if form.is_valid():
@@ -59,9 +60,13 @@ class Login(View):
                 login(request, form.get_user())
                 return HttpResponse()
             else:
-                return HttpResponse('User not found', status=405)
+                print 1
+                errors['error'] = 'Пользователь с таким именем не найден'
+                return HttpResponse(json.dumps(errors), status=405)
         else:
-            return HttpResponse('Login Error 123', status=405)
+            print 2
+            errors['error'] = 'Ошбика авторизации! Попробуйте еще раз!'
+            return HttpResponse(json.dumps(errors), status=405)
 
 
 class Main(TemplateView):

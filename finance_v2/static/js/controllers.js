@@ -55,6 +55,7 @@ app.controller('MainController', ['$scope', '$http', '$location', function($scop
 
 app.controller('RegFormController', ['$scope', '$http', '$location', function($scope, $http, $location) {
 	$scope.submit = function() {
+        $scope.submitted = true;
 		var in_data = {reg: $scope.reg};
 		console.log(in_data);
 		$http.post('/reg/', angular.toJson(in_data))
@@ -70,9 +71,8 @@ app.controller('RegFormController', ['$scope', '$http', '$location', function($s
 
 app.controller('LoginFormController', ['$scope', '$http', '$location', function($scope, $http, $location) {
     $scope.submit = function() {
+        $scope.submitted = true;
         var in_data = {login: $scope.login};
-        console.log('data =>' + in_data)
-        console.log('$.param =? ' + $.param(in_data))
         $http(
             {
                 method: 'POST',
@@ -81,11 +81,11 @@ app.controller('LoginFormController', ['$scope', '$http', '$location', function(
             }
         )
         .success(function(data, status) {
-            console.log(data + status);
             $location.path("/");
         })
         .error(function(data, status) {
-            console.log(data + status);
+            console.log(data['error']);
+            $scope.e = 'sdfdasfgvadf';
         });
     };
 }]);

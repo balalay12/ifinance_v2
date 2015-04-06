@@ -1,0 +1,41 @@
+<div class="col-lg-8 col-lg-offset-2 well well-sm">
+    <form class="form-horizontal" ng-controller="UpdateFormController" name="update_form">
+        <fieldset>
+            <legend>Добавление</legend>
+            <div class="form-group">
+                <label class="col-lg-2 control-label" for="inputDate">Введите дату</label>
+                <div class="col-lg-10">
+                    <input class="form-control" ng-model="add.date" type="text" name="inputDate" id="inputDate" value="{$ o.date $}" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg-2 control-label" for="inputMoney">Введите сумму</label>
+                <div class="col-lg-10">
+                    <input class="form-control" ng-model="add.money" type="text" id="inputMoney" placeholder="Введите сумму" value="{$ data.money $}" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg-2 control-label" for="inputComment">Введите описание</label>
+                <div class="col-lg-10">
+                    <input class="form-control" ng-model="add.comment" type="text" id="inputComment" placeholder="Введите описание"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg-2 control-label" for="select">Выберите категорию</label>
+                <div class="col-lg-10">
+                    <select class="form-control" name="select" id="select" ng-model="add.category">
+                        <option ng-repeat="item in data" value="{$ item.fields['operation_type'] $}">{$ item.fields['name'] $}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-lg-10 col-lg-offset-2">
+                    <button class="btn btn-default" type="reset">Очистить</button>
+                    <button class="btn btn-primary" ng-click="submit()" type="submit">Отправить</button>
+                </div>
+            </div>
+        </fieldset>
+	</form>
+</div>
+
+{$ obj $}

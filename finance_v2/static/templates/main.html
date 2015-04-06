@@ -9,7 +9,7 @@
     </thead>
     <tbody>
         <tr ng-repeat="oper in operations">
-            <td>{$ oper.date $}</td>
+            <td><a href="#/update/{$ oper.id $}">{$ oper.date $}</a></td>
             <td>{$ oper.money $}</td>
             <td>{$ oper.category $}</td>
             <td>{$ oper.comment $}</td>

@@ -18,6 +18,12 @@ class MySerializer(Serializer):
         self.objects.append(self._current)
 
 
+class MySerializer2(Serializer):
+    def end_object(self, obj):
+        self._current['id'] = obj._get_pk_val()
+        self._current['date'] = self._current['date'].isoformat()
+        self.objects.append(self._current)
+
 # class Base(View):
 #     form_class = None
 #
@@ -84,6 +90,10 @@ class Main(TemplateView):
             return HttpResponse('Main Login Error', status='403')
 
 
+class Read(View):
+    pass
+
+
 class Create(View):
     def post(self, request, *args, **kwargs):
         if len(request.body) == 0:
@@ -98,6 +108,19 @@ class Create(View):
                 form.save(request.user.id)
                 return HttpResponse()
             return HttpResponse('CREATE ERROR', status=405)
+
+
+class Update(View):
+    def post(self, request, *args, **kwargs):
+        # if len(request.body) == 1:
+        req = json.loads(request.body)
+        _id = req['pk']
+        serializer = MySerializer2()
+        _data = Operations.objects.filter(pk=_id)
+        data = serializer.serialize(_data)
+        print data
+        return HttpResponse(json.dumps(data), content_type='application/json')
+
 
 ########################################################
 def get_single_category(id):

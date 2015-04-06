@@ -29,6 +29,10 @@ app.config(function($routeProvider, $locationProvider) {
         templateUrl: 'static/templates/add.html',
         controller: 'CreateFormController'
     });
+    $routeProvider.when('/update/:operId', {
+        templateUrl: 'static/templates/update.html',
+        controller: 'UpdateFormController',
+    });
     $routeProvider.when('/logout/', {
         controller: 'LogoutController'
     });
@@ -114,6 +118,19 @@ app.controller('CreateFormController', ['$scope', '$http', '$location', function
                 console.log(data + status);
             });
     };
+}]);
+
+app.controller('UpdateFormController', ['$scope', '$http', '$routeParams', function($scope, $http, $routeParams) {
+    var _id = {pk: $routeParams.operId};
+    $http.post('/update/', angular.toJson(_id))
+    .success(function(data, status) {
+        console.log('Success: data -> ' + data + ' :: status -> ' + status);
+        $scope.obj = data;
+        console.log($scope.obj)
+    })
+    .error(function(data, status) {
+        console.log('Error: data -> ' + data + ' :: status -> ' + status);
+    });
 }]);
 
 app.controller('LogoutController', ['$http', '$location', function($http, $location) {

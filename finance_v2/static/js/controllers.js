@@ -14,7 +14,7 @@ app.config(['$httpProvider', function($httpProvider) {
 
 app.config(function($routeProvider, $locationProvider) {
     $routeProvider.when('/', {
-        templateUrl: 'static/templates/main.html' ,
+        templateUrl: 'static/templates/main.html',
         controller: 'MainController'
     });
     $routeProvider.when('/reg/', {
@@ -57,7 +57,7 @@ app.controller('MainController', ['$scope', '$http', '$location', function($scop
         });
 }]);
 
-app.controller('RegFormController', ['$scope', '$http', '$location', function($scope, $http, $location) {
+app.controller('RegFormController', ['$scope', '$http', '$location', '$log', function($scope, $http, $location, $log) {
 	$scope.submit = function() {
         $scope.submitted = true;
 		var in_data = {reg: $scope.reg};
@@ -68,12 +68,14 @@ app.controller('RegFormController', ['$scope', '$http', '$location', function($s
 				$location.path("/login")
 			})
 			.error(function(data, status) {
-				console.log("Not ok " + data);
+//				errors = angular.fromJson(data);
+                $log.warn(data.error);
+                $scope.e = data.error;
 			});
 	};
 }]);
 
-app.controller('LoginFormController', ['$scope', '$http', '$location', function($scope, $http, $location) {
+app.controller('LoginFormController', ['$scope', '$http', '$location', '$log', function($scope, $http, $location, $log) {
     $scope.submit = function() {
         $scope.submitted = true;
         var in_data = {login: $scope.login};
@@ -88,8 +90,9 @@ app.controller('LoginFormController', ['$scope', '$http', '$location', function(
             $location.path("/");
         })
         .error(function(data, status) {
-            console.log(data['error']);
-            $scope.e = 'sdfdasfgvadf';
+            errors = angular.fromJson(data)
+            $log.warn(data.error);
+            $scope.e = data.error;
         });
     };
 }]);
@@ -120,13 +123,13 @@ app.controller('CreateFormController', ['$scope', '$http', '$location', function
     };
 }]);
 
-app.controller('UpdateFormController', ['$scope', '$http', '$routeParams', function($scope, $http, $routeParams) {
+app.controller('UpdateFormController', ['$scope', '$http', '$routeParams', '$log', function($scope, $http, $routeParams, $log) {
     var _id = {pk: $routeParams.operId};
     $http.post('/update/', angular.toJson(_id))
     .success(function(data, status) {
-        console.log('Success: data -> ' + data + ' :: status -> ' + status);
-        $scope.obj = data;
-        console.log($scope.obj)
+        $log.debug('Success: data -> ' + data + ' :: status -> ' + status);
+        obj = angular.fromJson(data);
+        $scope.obj = obj[0];
     })
     .error(function(data, status) {
         console.log('Error: data -> ' + data + ' :: status -> ' + status);

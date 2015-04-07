@@ -4,6 +4,7 @@ import json
 from django.http import HttpResponse
 from django.views.generic import TemplateView, View
 from models import Categorys, Operations
+from django.contrib.auth.models import User
 from django.contrib.auth import login
 import forms
 from django.core import serializers
@@ -24,53 +25,53 @@ class MySerializer2(Serializer):
         self._current['date'] = self._current['date'].isoformat()
         self.objects.append(self._current)
 
-# class Base(View):
-#     form_class = None
-#
-#     def create(self, request):
-#         if self.form_class is None:
-#             return HttpResponse('Error', status=405)
-#         form = self.form_class()
-#
-#     def update(self):
-#         pass
-#
-#     def delete(self):
-#         pass
-
 
 class Reg(View):
     def post(self, request, *args, **kwargs):
+        errors = {}
         in_data = json.loads(request.body)
-        user_data = in_data['reg']
-
-        _data = {}
-        for k in user_data:
-            _data[k] = user_data[k]
-
-        form = forms.Reg(_data)
+        data = in_data['reg']
+        # проверяем существует ли пользователь с таким ник-неймом
+        try:
+            u = User.objects.filter(username=data['username'])
+            assert len(u) == 0
+        except AssertionError:
+            errors['error'] = 'Пользователь с таким именем уже существует'
+            return HttpResponse(json.dumps(errors), status=405)
+        # проверяем существует ли такая же почта пользователя
+        try:
+            _email = User.objects.filter(email=data['email'])
+            assert len(_email) == 0
+        except AssertionError:
+            errors['error'] = 'Пользователь с таким email существует!'
+            return HttpResponse(json.dumps(errors), status=405)
+        form = forms.Reg(data)
         if form.is_valid():
             form.save()
             return HttpResponse()
         else:
-            return HttpResponse('USER CREATION ERROR', status='403')
+            errors['error'] = 'Системная ошибка'
+            return HttpResponse(json.dumps(errors), status=405)
 
 
 class Login(View):
     def post(self, request):
         errors = {}
         in_data = json.loads(request.body)
+        _data = in_data['login']
+        # проверяем существует ли пользователь с таким ник-неймом
+        try:
+            u = User.objects.filter(username=_data['username'])
+            assert len(u) == 1
+        except AssertionError:
+            errors['error'] = 'Пользователь с таким именем не найден'
+            return HttpResponse(json.dumps(errors), status=405)
         form = forms.Login(in_data['login'])
         if form.is_valid():
             if form.get_user():
                 login(request, form.get_user())
                 return HttpResponse()
-            else:
-                print 1
-                errors['error'] = 'Пользователь с таким именем не найден'
-                return HttpResponse(json.dumps(errors), status=405)
         else:
-            print 2
             errors['error'] = 'Ошбика авторизации! Попробуйте еще раз!'
             return HttpResponse(json.dumps(errors), status=405)
 

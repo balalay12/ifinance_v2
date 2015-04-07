@@ -29,7 +29,6 @@ class Reg(forms.Form):
     password = forms.CharField()
 
     def save(self):
-        print self.cleaned_data['username']
         user = User.objects.create_user(self.cleaned_data['username'], self.cleaned_data['email'], self.cleaned_data['password'])
         user.save()
         return user

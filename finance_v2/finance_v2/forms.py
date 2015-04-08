@@ -47,3 +47,16 @@ class Create(forms.Form):
                                       category_id=self.cleaned_data['category'])
         q.save()
         q.user.add(user_id)
+
+
+class Update(forms.Form):
+    date = forms.DateField()
+    money = forms.FloatField()
+    comment = forms.CharField()
+    category = forms.IntegerField()
+
+    def save(self, operation_id):
+        q = Operations.objects.filter(pk=operation_id).update(money=self.cleaned_data['money'],
+                                                           date=self.cleaned_data['date'],
+                                                           comment=self.cleaned_data['comment'],
+                                                           category_id=self.cleaned_data['category'])

@@ -1,29 +1,14 @@
 # -*- coding: utf-8 -*-
 
 import json
+import forms
+from myserializers import *
 from django.http import HttpResponse
 from django.views.generic import TemplateView, View
 from models import Categorys, Operations
 from django.contrib.auth.models import User
 from django.contrib.auth import login
-import forms
 from django.core import serializers
-from django.core.serializers.python import Serializer
-
-
-class MySerializer(Serializer):
-    def end_object(self, obj):
-        self._current['id'] = obj._get_pk_val()
-        self._current['date'] = self._current['date'].isoformat()
-        self._current['category'] = get_single_category(self._current['category'])
-        self.objects.append(self._current)
-
-
-class MySerializer2(Serializer):
-    def end_object(self, obj):
-        self._current['id'] = obj._get_pk_val()
-        self._current['date'] = self._current['date'].isoformat()
-        self.objects.append(self._current)
 
 
 class Reg(View):
@@ -83,7 +68,7 @@ class Main(TemplateView):
         if request.user.is_authenticated():
             data = {}
             _instance = Operations.objects.filter(user=request.user.id)
-            serializer = MySerializer()
+            serializer = OperationsWithCategoryCollectionSerializer()
             data['operations'] = serializer.serialize(_instance)
             data['name'] = request.user.username
             return HttpResponse(json.dumps(data), content_type='application/json')
@@ -97,32 +82,37 @@ class Read(View):
 
 class Create(View):
     def post(self, request, *args, **kwargs):
-        if len(request.body) == 0:
-            data = Categorys.objects.all()
-            out_data = serializers.serialize('json', list(data))
-            return HttpResponse(out_data)
-        else:
-            _data = json.loads(request.body)
-            print _data
-            form = forms.Create(_data['add'])
-            if form.is_valid():
-                form.save(request.user.id)
-                return HttpResponse()
-            return HttpResponse('CREATE ERROR', status=405)
+        if request.user.is_authenticated():
+            if len(request.body) == 0:
+                data = Categorys.objects.all()
+                out_data = serializers.serialize('json', list(data))
+                return HttpResponse(out_data)
+            else:
+                _data = json.loads(request.body)
+                print _data
+                form = forms.Create(_data['add'])
+                if form.is_valid():
+                    form.save(request.user.id)
+                    return HttpResponse()
+                return HttpResponse('CREATE ERROR', status=405)
 
 
 class Update(View):
     def post(self, request, *args, **kwargs):
-        # if len(request.body) == 1:
-        req = json.loads(request.body)
-        _id = req['pk']
-        serializer = MySerializer2()
-        _data = Operations.objects.filter(pk=_id)
-        data = serializer.serialize(_data)
-        print data
-        return HttpResponse(json.dumps(data), content_type='application/json')
-
-
-########################################################
-def get_single_category(id):
-    return str(Categorys.objects.get(operation_type=id))
+        if request.user.is_authenticated():
+            data = {}
+            req = json.loads(request.body)
+            _id = req['pk']
+            if len(req) == 1:
+                serializer = OperationsCollectionSerializer()
+                operation = Operations.objects.filter(pk=_id)
+                serializer_cat = CategorySerializer()
+                categories = Categorys.objects.all()
+                data['operation'] = serializer.serialize(operation)
+                data['categories'] = serializer_cat.serialize(categories)
+                return HttpResponse(json.dumps(data), content_type='application/json')
+            else:
+                form = forms.Update(req['update'])
+                if form.is_valid():
+                    form.save(_id)
+                    return HttpResponse()

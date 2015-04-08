@@ -123,17 +123,33 @@ app.controller('CreateFormController', ['$scope', '$http', '$location', function
     };
 }]);
 
-app.controller('UpdateFormController', ['$scope', '$http', '$routeParams', '$log', function($scope, $http, $routeParams, $log) {
+app.controller('UpdateFormController',
+                ['$scope', '$http', '$routeParams', '$log', '$location',
+                function($scope, $http, $routeParams, $log, $location) {
     var _id = {pk: $routeParams.operId};
     $http.post('/update/', angular.toJson(_id))
     .success(function(data, status) {
         $log.debug('Success: data -> ' + data + ' :: status -> ' + status);
         obj = angular.fromJson(data);
-        $scope.obj = obj[0];
+        $scope.obj = obj.operation[0];
+        $scope.category = obj.categories
+        $log.log(obj)
     })
     .error(function(data, status) {
+        $location.path('/')
         console.log('Error: data -> ' + data + ' :: status -> ' + status);
     });
+
+    $scope.submit = function() {
+        var in_data = {update: $scope.obj, pk: $routeParams.operId};
+        $http.post('/update/', angular.toJson(in_data))
+        .success(function(data, status) {
+            $location.path('/');
+        })
+        .error(function(data, status) {
+            $log.warn(data);
+        });
+    };
 }]);
 
 app.controller('LogoutController', ['$http', '$location', function($http, $location) {

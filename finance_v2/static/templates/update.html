@@ -5,13 +5,13 @@
             <div class="form-group">
                 <label class="col-lg-2 control-label" for="inputDate">Введите дату</label>
                 <div class="col-lg-10">
-                    <input class="form-control" ng-model="obj.date" type="text" name="inputDate" id="inputDate">
+                    <input class="form-control" ng-model="obj.date" type="text" name="inputDate" id="inputDate" placeholder="Введите дату">
                 </div>
             </div>
             <div class="form-group">
                 <label class="col-lg-2 control-label" for="inputMoney">Введите сумму</label>
                 <div class="col-lg-10">
-                    <input class="form-control" ng-model="obj.money" type="text" id="inputMoney" value="{$ obj.money $}"/>
+                    <input class="form-control" ng-model="obj.money" type="text" id="inputMoney" placeholder="Введите сумму"/>
                 </div>
             </div>
             <div class="form-group">
@@ -24,7 +24,8 @@
                 <label class="col-lg-2 control-label" for="select">Выберите категорию</label>
                 <div class="col-lg-10">
                     <select class="form-control" name="select" id="select" ng-model="obj.category">
-                        <option ng-repeat="item in data" value="{$ item.fields['operation_type'] $}">{$ item.fields['name'] $}</option>
+                        <option>-----------------</option>
+                        <option ng-repeat="item in category" value="{$ item['operation_type'] $}">{$ item['name'] $}</option>
                     </select>
                 </div>
             </div>

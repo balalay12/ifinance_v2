@@ -116,3 +116,19 @@ class Update(View):
                 if form.is_valid():
                     form.save(_id)
                     return HttpResponse()
+
+
+class Delete(View):
+    def post(self, request):
+        if request.user.is_authenticated():
+            req = json.loads(request.body)
+            if len(req) == 1:
+                qs = Operations.objects.filter(pk=req['pk'])
+                serializer = OperationsWithCategoryCollectionSerializer()
+                data = serializer.serialize(qs)
+                return HttpResponse(json.dumps(data), content_type='application/json')
+            elif len(req) == 2:
+                Operations.objects.filter(pk=req['pk']).delete()
+                return HttpResponse()
+        else:
+            return HttpResponse('user not auth', status=405)

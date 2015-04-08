@@ -33,6 +33,10 @@ app.config(function($routeProvider, $locationProvider) {
         templateUrl: 'static/templates/update.html',
         controller: 'UpdateFormController',
     });
+    $routeProvider.when('/delete/:operId', {
+        templateUrl: 'static/templates/delete.html',
+        controller: 'DeleteFormController',
+    });
     $routeProvider.when('/logout/', {
         controller: 'LogoutController'
     });
@@ -151,6 +155,33 @@ app.controller('UpdateFormController',
         });
     };
 }]);
+
+app.controller('DeleteFormController',
+                ['$scope', '$http', '$routeParams', '$log', '$location',
+                function($scope, $http, $routeParams, $log, $location) {
+    var _id = {pk: $routeParams.operId};
+    $http.post('/delete/', angular.toJson(_id))
+    .success(function(data, status) {
+        $log.debug('Success: data -> ' + data + ' :: status -> ' + status);
+        obj = angular.fromJson(data);
+        $scope.del = obj[0]
+    })
+    .error(function(data, status) {
+        $location.path('/')
+        console.log('Error: data -> ' + data + ' :: status -> ' + status);
+    });
+
+    $scope.submit = function() {
+        var in_data = {delete: true, pk: $routeParams.operId};
+        $http.post('/delete/', angular.toJson(in_data))
+        .success(function(data, status) {
+            $location.path('/');
+        })
+        .error(function(data, status) {
+            $log.warn(data);
+        });
+    };
+}])
 
 app.controller('LogoutController', ['$http', '$location', function($http, $location) {
     $http.get('/logout/')

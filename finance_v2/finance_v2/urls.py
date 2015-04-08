@@ -15,6 +15,7 @@ urlpatterns = patterns('',
     url(r'^logout/$', 'django.contrib.auth.views.logout', {'next_page': 'main'}, name='logout'),
     url(r'^add/$', views.Create.as_view(), name='add'),
     url(r'^update/$', views.Update.as_view(), name='update'),
+    url(r'^delete/$', views.Delete.as_view(), name='delete'),
 
     url(r'^admin/', include(admin.site.urls)),
 )

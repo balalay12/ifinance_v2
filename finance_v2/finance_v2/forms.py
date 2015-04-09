@@ -29,7 +29,9 @@ class Reg(forms.Form):
     password = forms.CharField()
 
     def save(self):
-        user = User.objects.create_user(self.cleaned_data['username'], self.cleaned_data['email'], self.cleaned_data['password'])
+        user = User.objects.create_user(self.cleaned_data['username'],
+                                        self.cleaned_data['email'],
+                                        self.cleaned_data['password'])
         user.save()
         return user
 
@@ -57,6 +59,6 @@ class Update(forms.Form):
 
     def save(self, operation_id):
         q = Operations.objects.filter(pk=operation_id).update(money=self.cleaned_data['money'],
-                                                           date=self.cleaned_data['date'],
-                                                           comment=self.cleaned_data['comment'],
-                                                           category_id=self.cleaned_data['category'])
+                                                              date=self.cleaned_data['date'],
+                                                              comment=self.cleaned_data['comment'],
+                                                              category_id=self.cleaned_data['category'])

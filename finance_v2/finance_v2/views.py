@@ -9,6 +9,58 @@ from models import Categorys, Operations
 from django.contrib.auth.models import User
 from django.contrib.auth import login
 from django.core import serializers
+from django.utils.functional import cached_property
+from django.template import Context
+
+
+class Base(View):
+    form_class = None
+    serializer = None
+    model = None
+
+    def read(self, request):
+        if self.object_id:
+            return self.get_single_item()
+        else:
+            return self.get_collection()
+
+    @cached_property
+    def data(self):
+        _data = {}
+        for k in self.request.GET:
+            _data[k] = self.request.GET[k]
+        if self.request.method.upper() == 'POST':
+            try:
+                data = json.loads(self.request.body)
+            except ValueError:
+                pass
+            else:
+                _data.update(data)
+        return Context(_data)
+
+    @property
+    def object_id(self):
+        return self.data.get('id')
+
+    def get_single_item(self):
+        try:
+            qs = self.get_queryset().filter(pk=self.object_id)
+            assert len(qs) == 1
+        except AssertionError:
+            raise 'Error'
+        out_data = self.serialize_qs(qs)
+        print out_data
+
+    def get_collection(self):
+        qs = self.get_queryset()
+        out_data = self.serialize_qs(qs)
+        print out_data
+
+    def get_queryset(self):
+        return self.model.objects.all()
+
+    def serialize_qs(self, qs):
+        return self.serializer.serialize(qs)
 
 
 class Reg(View):
@@ -76,12 +128,19 @@ class Main(TemplateView):
             return HttpResponse('Main Login Error', status='403')
 
 
-class Read(View):
-    pass
+class Read(Base):
+    serializer = OperationsCollectionSerializer()
+    model = Operations
+
+    def post(self, request):
+        if self.object_id:
+            return self.read(request)
+        else:
+            return self.read(request)
 
 
 class Create(View):
-    def post(self, request, *args, **kwargs):
+    def post(self, request):
         if request.user.is_authenticated():
             if len(request.body) == 0:
                 data = Categorys.objects.all()

@@ -37,6 +37,10 @@ app.config(function($routeProvider, $locationProvider) {
         templateUrl: 'static/templates/delete.html',
         controller: 'DeleteFormController',
     });
+    $routeProvider.when('/read/', {
+        templateUrl: 'static/templates/login.html',
+        controller: 'ReadFormController',
+    });
     $routeProvider.when('/logout/', {
         controller: 'LogoutController'
     });
@@ -181,6 +185,19 @@ app.controller('DeleteFormController',
             $log.warn(data);
         });
     };
+}]);
+
+app.controller('ReadFormController',
+                ['$scope', '$http', '$routeParams', '$log', '$location',
+                function($scope, $http, $routeParams, $log, $location) {
+//    var _id = {id: 5};
+    $http.post('/read/')// angular.toJson(_id))
+    .success(function(data, status) {
+        $log.debug('Success: data -> ' + data + ' :: status -> ' + status);
+    })
+    .error(function(data, status) {
+        console.log('Error: data -> ' + data + ' :: status -> ' + status);
+    });
 }])
 
 app.controller('LogoutController', ['$http', '$location', function($http, $location) {

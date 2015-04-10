@@ -17,6 +17,7 @@ urlpatterns = patterns('',
     url(r'^update/$', views.Update.as_view(), name='update'),
     url(r'^delete/$', views.Delete.as_view(), name='delete'),
     url(r'^read/$', views.Read.as_view(), name='read'),
+    url(r'^get_categorys', views.GetCategorys.as_view(), name='get_categorys'),
 
     url(r'^admin/', include(admin.site.urls)),
 )

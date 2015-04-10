@@ -24,6 +24,20 @@ class Base(View):
         else:
             return self.get_collection()
 
+    def create(self, request):
+        if self.form_class is None:
+            return HttpResponse(status=405)# TODO: error form
+        form = self.form_class(self.data['add'])
+        if form.is_valid():
+            form.save(request.user.id)
+            return HttpResponse()
+
+    def update(self, request):
+        pass
+
+    def delete(self, request):
+        pass
+
     @cached_property
     def data(self):
         _data = {}
@@ -47,20 +61,24 @@ class Base(View):
             qs = self.get_queryset().filter(pk=self.object_id)
             assert len(qs) == 1
         except AssertionError:
+            # TODO: 404 error
             raise 'Error'
         out_data = self.serialize_qs(qs)
-        print out_data
+        return self.success_response(out_data)
 
     def get_collection(self):
         qs = self.get_queryset()
         out_data = self.serialize_qs(qs)
-        print out_data
+        return self.success_response(out_data)
 
     def get_queryset(self):
         return self.model.objects.all()
 
     def serialize_qs(self, qs):
         return self.serializer.serialize(qs)
+
+    def success_response(self, data):
+        return HttpResponse(json.dumps(data), content_type='application/json')
 
 
 class Reg(View):
@@ -133,28 +151,22 @@ class Read(Base):
     model = Operations
 
     def post(self, request):
-        if self.object_id:
-            return self.read(request)
-        else:
-            return self.read(request)
+        return self.read(request)
 
 
-class Create(View):
+class GetCategorys(Base):
+    model = Categorys
+    serializer = CategorySerializer()
+
     def post(self, request):
-        if request.user.is_authenticated():
-            if len(request.body) == 0:
-                data = Categorys.objects.all()
-                out_data = serializers.serialize('json', list(data))
-                return HttpResponse(out_data)
-            else:
-                _data = json.loads(request.body)
-                print _data
-                form = forms.Create(_data['add'])
-                if form.is_valid():
-                    form.save(request.user.id)
-                    return HttpResponse()
-                return HttpResponse('CREATE ERROR', status=405)
+        return self.get_collection()
 
+
+class Create(Base):
+    form_class = forms.Create
+
+    def post(self, request):
+        return self.create(request)
 
 class Update(View):
     def post(self, request, *args, **kwargs):

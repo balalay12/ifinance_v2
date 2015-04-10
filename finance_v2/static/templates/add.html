@@ -24,7 +24,7 @@
                 <label class="col-lg-2 control-label" for="select">Выберите категорию</label>
                 <div class="col-lg-10">
                     <select class="form-control" name="select" id="select" ng-model="add.category">
-                        <option ng-repeat="item in data" value="{$ item.fields['operation_type'] $}">{$ item.fields['name'] $}</option>
+                        <option ng-repeat="item in data" value="{$ item['operation_type'] $}">{$ item['name'] $}</option>
                     </select>
                 </div>
             </div>

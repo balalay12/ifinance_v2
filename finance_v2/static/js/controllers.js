@@ -106,15 +106,17 @@ app.controller('LoginFormController', ['$scope', '$http', '$location', '$log', f
 }]);
 
 app.controller('CreateFormController', ['$scope', '$http', '$location', function($scope, $http, $location) {
-    $http.post('/add/')
+    $http.post('/get_categorys/')
         .success(function(data, status) {
 //            console.log('status -> OK -> ' + status);
 //            console.log('DATA -> ' + data);
             $scope.data = data;
+            console.log(data)
         })
         .error(function(data, status) {
-            console.log('status -> NOT_OK -> ' + status);
+            console.log(data);
             //$location.path("/login");
+
         });
 
     $scope.submit = function() {

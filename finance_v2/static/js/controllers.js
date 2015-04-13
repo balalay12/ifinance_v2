@@ -147,8 +147,21 @@ app.controller('UpdateFormController',
         console.log('Error: data -> ' + data + ' :: status -> ' + status);
     });
 
+    $http.post('/get_categorys/')
+        .success(function(data, status) {
+//            console.log('status -> OK -> ' + status);
+//            console.log('DATA -> ' + data);
+            $scope.category = data;
+            console.log(data)
+        })
+        .error(function(data, status) {
+            console.log(data);
+            //$location.path("/login");
+
+        });
+
     $scope.submit = function() {
-        var in_data = {update: $scope.obj, pk: $routeParams.operId};
+        var in_data = {update: $scope.obj, id: $routeParams.operId};
         $http.post('/update/', angular.toJson(in_data))
         .success(function(data, status) {
             $location.path('/');

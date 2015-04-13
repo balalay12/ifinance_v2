@@ -39,7 +39,7 @@ class Base(View):
             instance = self.get_queryset().get(pk=self.object_id)
         except ObjectDoesNotExist:
             return HttpResponse(status=405)# TODO: error update form
-        form = self.form_class(self.data['udpate'])
+        form = self.form_class(self.data['update'])
         if form.is_valid():
             form.save(self.object_id)
             return HttpResponse()
@@ -178,7 +178,7 @@ class GetCategorys(Base):
     serializer = CategorySerializer()
 
     def post(self, request):
-        return self.get_collection(filter_user=True)
+        return self.get_collection()
 
 
 class Create(Base):
@@ -190,6 +190,7 @@ class Create(Base):
 
 class Update(Base):
     # TODO: need return category with operations
+    model = Operations
     form_class = forms.Update
     serializer = OperationsCollectionSerializer()
 

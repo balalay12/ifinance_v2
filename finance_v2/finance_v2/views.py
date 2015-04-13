@@ -8,9 +8,9 @@ from django.views.generic import TemplateView, View
 from models import Categorys, Operations
 from django.contrib.auth.models import User
 from django.contrib.auth import login
-from django.core import serializers
 from django.utils.functional import cached_property
 from django.template import Context
+from django.core.exceptions import ObjectDoesNotExist
 
 
 class Base(View):
@@ -26,17 +26,33 @@ class Base(View):
 
     def create(self, request):
         if self.form_class is None:
-            return HttpResponse(status=405)# TODO: error form
+            return HttpResponse(status=405)# TODO: error create form
         form = self.form_class(self.data['add'])
         if form.is_valid():
             form.save(request.user.id)
             return HttpResponse()
 
     def update(self, request):
-        pass
+        if self.form_class is None or not self.object_id:
+            return HttpResponse(status=405)# TODO: error update form
+        try:
+            instance = self.get_queryset().get(pk=self.object_id)
+        except ObjectDoesNotExist:
+            return HttpResponse(status=405)# TODO: error update form
+        form = self.form_class(self.data['udpate'])
+        if form.is_valid():
+            form.save(self.object_id)
+            return HttpResponse()
+        else:
+            # TODO: make validation error
+            pass
 
     def delete(self, request):
-        pass
+        if not self.object_id:
+             return HttpResponse(status=405)
+        qs = self.get_queryset().filter(pk=self.object_id, user=self.request.user.id)
+        qs.delete()
+        return HttpResponse()
 
     @cached_property
     def data(self):
@@ -66,8 +82,11 @@ class Base(View):
         out_data = self.serialize_qs(qs)
         return self.success_response(out_data)
 
-    def get_collection(self):
-        qs = self.get_queryset()
+    def get_collection(self, filter_user=False):
+        if filter_user:
+            qs = self.get_queryset().filter(user=self.request.user.id)
+        else:
+            qs = self.get_queryset()
         out_data = self.serialize_qs(qs)
         return self.success_response(out_data)
 
@@ -159,7 +178,7 @@ class GetCategorys(Base):
     serializer = CategorySerializer()
 
     def post(self, request):
-        return self.get_collection()
+        return self.get_collection(filter_user=True)
 
 
 class Create(Base):
@@ -168,38 +187,19 @@ class Create(Base):
     def post(self, request):
         return self.create(request)
 
-class Update(View):
-    def post(self, request, *args, **kwargs):
-        if request.user.is_authenticated():
-            data = {}
-            req = json.loads(request.body)
-            _id = req['pk']
-            if len(req) == 1:
-                serializer = OperationsCollectionSerializer()
-                operation = Operations.objects.filter(pk=_id)
-                serializer_cat = CategorySerializer()
-                categories = Categorys.objects.all()
-                data['operation'] = serializer.serialize(operation)
-                data['categories'] = serializer_cat.serialize(categories)
-                return HttpResponse(json.dumps(data), content_type='application/json')
-            else:
-                form = forms.Update(req['update'])
-                if form.is_valid():
-                    form.save(_id)
-                    return HttpResponse()
 
+class Update(Base):
+    # TODO: need return category with operations
+    form_class = forms.Update
+    serializer = OperationsCollectionSerializer()
 
-class Delete(View):
     def post(self, request):
-        if request.user.is_authenticated():
-            req = json.loads(request.body)
-            if len(req) == 1:
-                qs = Operations.objects.filter(pk=req['pk'])
-                serializer = OperationsWithCategoryCollectionSerializer()
-                data = serializer.serialize(qs)
-                return HttpResponse(json.dumps(data), content_type='application/json')
-            elif len(req) == 2:
-                Operations.objects.filter(pk=req['pk']).delete()
-                return HttpResponse()
-        else:
-            return HttpResponse('user not auth', status=405)
+        return self.update(request)
+
+
+class Delete(Base):
+    model = Operations
+    serializer = OperationsWithCategoryCollectionSerializer()
+
+    def post(self, request):
+        return self.delete(request)

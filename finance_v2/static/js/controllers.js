@@ -136,14 +136,11 @@ app.controller('CreateFormController', ['$scope', '$http', '$location', function
 app.controller('UpdateFormController',
                 ['$scope', '$http', '$routeParams', '$log', '$location',
                 function($scope, $http, $routeParams, $log, $location) {
-    var _id = {pk: $routeParams.operId};
-    $http.post('/update/', angular.toJson(_id))
+    var _id = {id: $routeParams.operId};
+    $http.post('/read/', angular.toJson(_id))
     .success(function(data, status) {
         $log.debug('Success: data -> ' + data + ' :: status -> ' + status);
-        obj = angular.fromJson(data);
-        $scope.obj = obj.operation[0];
-        $scope.category = obj.categories
-        $log.log(obj)
+        $scope.obj = data[0];
     })
     .error(function(data, status) {
         $location.path('/')
@@ -165,12 +162,13 @@ app.controller('UpdateFormController',
 app.controller('DeleteFormController',
                 ['$scope', '$http', '$routeParams', '$log', '$location',
                 function($scope, $http, $routeParams, $log, $location) {
-    var _id = {pk: $routeParams.operId};
-    $http.post('/delete/', angular.toJson(_id))
+    var _id = {id: $routeParams.operId};
+    $http.post('/read/', angular.toJson(_id))
     .success(function(data, status) {
         $log.debug('Success: data -> ' + data + ' :: status -> ' + status);
-        obj = angular.fromJson(data);
-        $scope.del = obj[0]
+//        obj = angular.fromJson(data);
+        $scope.del = data[0];
+        $log.log(data[0])
     })
     .error(function(data, status) {
         $location.path('/')
@@ -178,7 +176,7 @@ app.controller('DeleteFormController',
     });
 
     $scope.submit = function() {
-        var in_data = {delete: true, pk: $routeParams.operId};
+        var in_data = {id: $routeParams.operId};
         $http.post('/delete/', angular.toJson(in_data))
         .success(function(data, status) {
             $location.path('/');

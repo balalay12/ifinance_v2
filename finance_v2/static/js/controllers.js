@@ -77,6 +77,7 @@ app.controller('RegFormController', ['$scope', '$http', '$location', '$log', fun
 			})
 			.error(function(data, status) {
 //				errors = angular.fromJson(data);
+                $log.warn(data)
                 $log.warn(data.error);
                 $scope.e = data.error;
 			});
@@ -122,7 +123,7 @@ app.controller('CreateFormController', ['$scope', '$http', '$location', function
     $scope.submit = function() {
         var in_data = {add: $scope.add};
         console.log(in_data)
-        $http.post('/add/', angular.toJson(in_data))
+        $http.post('/crud/', angular.toJson(in_data))
             .success(function(data, status) {
                 console.log(data + status);
                 //$location.path("/main");
@@ -136,8 +137,7 @@ app.controller('CreateFormController', ['$scope', '$http', '$location', function
 app.controller('UpdateFormController',
                 ['$scope', '$http', '$routeParams', '$log', '$location',
                 function($scope, $http, $routeParams, $log, $location) {
-    var _id = {id: $routeParams.operId};
-    $http.post('/read/', angular.toJson(_id))
+    $http.get('/crud/', {params: {id: $routeParams.operId}})
     .success(function(data, status) {
         $log.debug('Success: data -> ' + data + ' :: status -> ' + status);
         $scope.obj = data[0];
@@ -162,7 +162,7 @@ app.controller('UpdateFormController',
 
     $scope.submit = function() {
         var in_data = {update: $scope.obj, id: $routeParams.operId};
-        $http.post('/update/', angular.toJson(in_data))
+        $http.post('/crud/', angular.toJson(in_data))
         .success(function(data, status) {
             $location.path('/');
         })
@@ -175,8 +175,7 @@ app.controller('UpdateFormController',
 app.controller('DeleteFormController',
                 ['$scope', '$http', '$routeParams', '$log', '$location',
                 function($scope, $http, $routeParams, $log, $location) {
-    var _id = {id: $routeParams.operId};
-    $http.post('/read/', angular.toJson(_id))
+    $http.get('/read/', {params: {id: $routeParams.operId}})
     .success(function(data, status) {
         $log.debug('Success: data -> ' + data + ' :: status -> ' + status);
 //        obj = angular.fromJson(data);
@@ -189,8 +188,8 @@ app.controller('DeleteFormController',
     });
 
     $scope.submit = function() {
-        var in_data = {id: $routeParams.operId};
-        $http.post('/delete/', angular.toJson(in_data))
+//        var in_data = {id: $routeParams.operId};
+        $http.delete('/crud/', {params: {id: $routeParams.operId}})
         .success(function(data, status) {
             $location.path('/');
         })
@@ -199,19 +198,6 @@ app.controller('DeleteFormController',
         });
     };
 }]);
-
-app.controller('ReadFormController',
-                ['$scope', '$http', '$routeParams', '$log', '$location',
-                function($scope, $http, $routeParams, $log, $location) {
-//    var _id = {id: 5};
-    $http.post('/read/')// angular.toJson(_id))
-    .success(function(data, status) {
-        $log.debug('Success: data -> ' + data + ' :: status -> ' + status);
-    })
-    .error(function(data, status) {
-        console.log('Error: data -> ' + data + ' :: status -> ' + status);
-    });
-}])
 
 app.controller('LogoutController', ['$http', '$location', function($http, $location) {
     $http.get('/logout/')

@@ -2,7 +2,6 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 import views
 from django.views.decorators.csrf import ensure_csrf_cookie
-from django.shortcuts import resolve_url
 
 urlpatterns = patterns('',
     # Examples:
@@ -13,9 +12,8 @@ urlpatterns = patterns('',
     url(r'^reg/$', views.Reg.as_view(), name='reg'),
     url(r'^login/$', views.Login.as_view(), name='login'),
     url(r'^logout/$', 'django.contrib.auth.views.logout', {'next_page': 'main'}, name='logout'),
-    url(r'^add/$', views.Create.as_view(), name='add'),
-    url(r'^update/$', views.Update.as_view(), name='update'),
-    url(r'^delete/$', views.Delete.as_view(), name='delete'),
+    url(r'^crud/$', views.CRUDOperations.as_view(), name='CRUD'),
+    url(r'^delete/(?P<id>\d+)/$', views.CRUDOperations.as_view(), name='delete'),
     url(r'^read/$', views.Read.as_view(), name='read'),
     url(r'^get_categorys', views.GetCategorys.as_view(), name='get_categorys'),
 

@@ -14,7 +14,8 @@ from django.core.exceptions import ObjectDoesNotExist
 
 
 class Base(View):
-    form_class = None
+    create_form_class = None
+    update_form_class = None
     serializer = None
     model = None
 
@@ -25,21 +26,21 @@ class Base(View):
             return self.get_collection()
 
     def create(self, request):
-        if self.form_class is None:
+        if self.create_form_class is None:
             return HttpResponse(status=405)# TODO: error create form
-        form = self.form_class(self.data['add'])
+        form = self.create_form_class(self.data['add'])
         if form.is_valid():
             form.save(request.user.id)
             return HttpResponse()
 
     def update(self, request):
-        if self.form_class is None or not self.object_id:
+        if self.update_form_class is None or not self.object_id:
             return HttpResponse(status=405)# TODO: error update form
         try:
             instance = self.get_queryset().get(pk=self.object_id)
         except ObjectDoesNotExist:
             return HttpResponse(status=405)# TODO: error update form
-        form = self.form_class(self.data['update'])
+        form = self.update_form_class(self.data['update'])
         if form.is_valid():
             form.save(self.object_id)
             return HttpResponse()
@@ -47,7 +48,7 @@ class Base(View):
             # TODO: make validation error
             pass
 
-    def delete(self, request):
+    def remove(self, request):
         if not self.object_id:
              return HttpResponse(status=405)
         qs = self.get_queryset().filter(pk=self.object_id, user=self.request.user.id)
@@ -165,12 +166,25 @@ class Main(TemplateView):
             return HttpResponse('Main Login Error', status='403')
 
 
-class Read(Base):
-    serializer = OperationsCollectionSerializer()
+class CRUDOperations(Base):
     model = Operations
+    create_form_class = forms.Create
+    update_form_class = forms.Update
+
+    def get(self, request):
+        self.serializer = OperationsCollectionSerializer()
+        if request.is_ajax():
+            return self.read(request)
 
     def post(self, request):
-        return self.read(request)
+        if self.object_id:
+            self.serializer = OperationsCollectionSerializer()
+            return self.update(request)
+        else:
+            return self.create(request)
+
+    def delete(self, request):
+        return self.remove(request)
 
 
 class GetCategorys(Base):
@@ -181,26 +195,3 @@ class GetCategorys(Base):
         return self.get_collection()
 
 
-class Create(Base):
-    form_class = forms.Create
-
-    def post(self, request):
-        return self.create(request)
-
-
-class Update(Base):
-    # TODO: need return category with operations
-    model = Operations
-    form_class = forms.Update
-    serializer = OperationsCollectionSerializer()
-
-    def post(self, request):
-        return self.update(request)
-
-
-class Delete(Base):
-    model = Operations
-    serializer = OperationsWithCategoryCollectionSerializer()
-
-    def post(self, request):
-        return self.delete(request)

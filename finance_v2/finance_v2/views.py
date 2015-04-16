@@ -193,5 +193,3 @@ class GetCategorys(Base):
 
     def post(self, request):
         return self.get_collection()
-
-

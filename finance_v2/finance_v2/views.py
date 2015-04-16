@@ -28,6 +28,7 @@ class Base(View):
     def create(self, request):
         if self.create_form_class is None:
             return HttpResponse(status=405)# TODO: error create form
+        print self.data
         form = self.create_form_class(self.data['add'])
         if form.is_valid():
             form.save(request.user.id)
@@ -172,13 +173,13 @@ class CRUDOperations(Base):
     update_form_class = forms.Update
 
     def get(self, request):
-        self.serializer = OperationsCollectionSerializer()
+        self.serializer = OperationsWithCategoryCollectionSerializer()
         if request.is_ajax():
             return self.read(request)
 
     def post(self, request):
         if self.object_id:
-            self.serializer = OperationsCollectionSerializer()
+            self.serializer = OperationsWithCategoryCollectionSerializer()
             return self.update(request)
         else:
             return self.create(request)
@@ -191,5 +192,5 @@ class GetCategorys(Base):
     model = Categorys
     serializer = CategorySerializer()
 
-    def post(self, request):
+    def get(self, request):
         return self.get_collection()

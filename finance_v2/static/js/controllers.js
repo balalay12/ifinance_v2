@@ -1,4 +1,4 @@
-var app = angular.module('app', ['ngRoute']);
+var app = angular.module('app', ['ngRoute', 'ngResource']);
 
 app.config(function($interpolateProvider) {
     $interpolateProvider.startSymbol('{$');
@@ -50,19 +50,25 @@ app.config(function($routeProvider, $locationProvider) {
 //    $locationProvider.html5Mode(true);
 });
 
-app.controller('MainController', ['$scope', '$http', '$location', function($scope, $http, $location) {
-    $http.post('/')
-        .success(function(data, status) {
-            console.log('MAIN PAGE -> OK -> ' + status);
-            console.log('DATA -> ' + data);
-            $scope.name = data['name']
-            $scope.operations = data['operations']
-            console.log($scope.operations)
-        })
-        .error(function(data, status) {
-            console.log('MAIN PAGE -> NOT_OK -> ' + status);
-            $location.path("/login");
-        });
+app.config(['$resourceProvider', function($resourceProvider) {
+  $resourceProvider.defaults.stripTrailingSlashes = false;
+}]);
+
+app.factory('Post', ['$resource', function($resource) {
+    return $resource('/crud/');
+}]);
+
+app.factory('Category', ['$resource', function($resource) {
+    return $resource('/get_categorys/');
+}]);
+
+app.controller('MainController', ['$scope', '$location', 'Post',function($scope, $location, Post) {
+    var res = Post.query(function() {
+        $scope.operations = res;
+        console.log(res)
+    }, function(errResponse) {
+        $location.path('/')
+    });
 }]);
 
 app.controller('RegFormController', ['$scope', '$http', '$location', '$log', function($scope, $http, $location, $log) {
@@ -106,59 +112,60 @@ app.controller('LoginFormController', ['$scope', '$http', '$location', '$log', f
     };
 }]);
 
-app.controller('CreateFormController', ['$scope', '$http', '$location', function($scope, $http, $location) {
-    $http.post('/get_categorys/')
-        .success(function(data, status) {
-//            console.log('status -> OK -> ' + status);
-//            console.log('DATA -> ' + data);
-            $scope.data = data;
-            console.log(data)
-        })
-        .error(function(data, status) {
-            console.log(data);
-            //$location.path("/login");
-
-        });
+app.controller('CreateFormController',
+                ['$scope', '$location', 'Category', 'Post', 
+                function($scope, $location, Category, Post) {
+    var cat = Category.query(function() {
+        $scope.data = cat;
+    }, function(errResponse) {
+//        $location.path('/')
+    });
 
     $scope.submit = function() {
-        var in_data = {add: $scope.add};
-        console.log(in_data)
-        $http.post('/crud/', angular.toJson(in_data))
-            .success(function(data, status) {
-                console.log(data + status);
-                //$location.path("/main");
-            })
-            .error(function(data, status) {
-                console.log(data + status);
-            });
+        var res = Post.save({add:$scope.add},function() {
+            $location.path('/')
+        }, function(errResponse) {
+            console.log(errResponse)
+        });
     };
 }]);
 
 app.controller('UpdateFormController',
-                ['$scope', '$http', '$routeParams', '$log', '$location',
-                function($scope, $http, $routeParams, $log, $location) {
-    $http.get('/crud/', {params: {id: $routeParams.operId}})
-    .success(function(data, status) {
-        $log.debug('Success: data -> ' + data + ' :: status -> ' + status);
-        $scope.obj = data[0];
-    })
-    .error(function(data, status) {
-        $location.path('/')
-        console.log('Error: data -> ' + data + ' :: status -> ' + status);
+                ['$scope', '$http', '$routeParams', '$log', '$location', 'Post', 'Category',
+                function($scope, $http, $routeParams, $log, $location, Post, Category) {
+    var res = Post.get({id:$routeParams.operId}, function() {
+        $scope.obj = res;
+        $log.log(res);
     });
 
-    $http.post('/get_categorys/')
-        .success(function(data, status) {
-//            console.log('status -> OK -> ' + status);
-//            console.log('DATA -> ' + data);
-            $scope.category = data;
-            console.log(data)
-        })
-        .error(function(data, status) {
-            console.log(data);
-            //$location.path("/login");
+//    $http.get('/crud/', {params: {id: $routeParams.operId}})
+//    .success(function(data, status) {
+//        $log.debug('Success: data -> ' + data + ' :: status -> ' + status);
+//        $scope.obj = data[0];
+//    })
+//    .error(function(data, status) {
+//        $location.path('/')
+//        console.log('Error: data -> ' + data + ' :: status -> ' + status);
+//    });
 
-        });
+//    var cat = Category.query(function() {
+//        $scope.category = cat;
+//    }, function(errResponse) {
+////        $location.path('/')
+//    });
+
+//    $http.post('/get_categorys/')
+//        .success(function(data, status) {
+////            console.log('status -> OK -> ' + status);
+////            console.log('DATA -> ' + data);
+//            $scope.category = data;
+//            console.log(data)
+//        })
+//        .error(function(data, status) {
+//            console.log(data);
+//            //$location.path("/login");
+//
+//        });
 
     $scope.submit = function() {
         var in_data = {update: $scope.obj, id: $routeParams.operId};

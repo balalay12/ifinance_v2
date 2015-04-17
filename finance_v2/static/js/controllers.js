@@ -115,7 +115,7 @@ app.controller('LoginFormController', ['$scope', '$http', '$location', '$log', f
 app.controller('CreateFormController',
                 ['$scope', '$location', 'Category', 'Post', 
                 function($scope, $location, Category, Post) {
-    var cat = Category.query(function() {
+    Category.query(function(cat) {
         $scope.data = cat;
     }, function(errResponse) {
 //        $location.path('/')
@@ -130,80 +130,35 @@ app.controller('CreateFormController',
     };
 }]);
 
-app.controller('UpdateFormController',
-                ['$scope', '$http', '$routeParams', '$log', '$location', 'Post', 'Category',
-                function($scope, $http, $routeParams, $log, $location, Post, Category) {
-    var res = Post.get({id:$routeParams.operId}, function() {
-        $scope.obj = res;
-        $log.log(res);
+app.controller('UpdateFormController', ['$scope', '$routeParams', '$log', '$location', 'Post', 'Category', function($scope, $routeParams, $log, $location, Post, Category) {
+
+    Post.query({id:$routeParams.operId}, function(upd) {
+        $scope.obj = upd[0];
     });
 
-//    $http.get('/crud/', {params: {id: $routeParams.operId}})
-//    .success(function(data, status) {
-//        $log.debug('Success: data -> ' + data + ' :: status -> ' + status);
-//        $scope.obj = data[0];
-//    })
-//    .error(function(data, status) {
-//        $location.path('/')
-//        console.log('Error: data -> ' + data + ' :: status -> ' + status);
-//    });
-
-//    var cat = Category.query(function() {
-//        $scope.category = cat;
-//    }, function(errResponse) {
-////        $location.path('/')
-//    });
-
-//    $http.post('/get_categorys/')
-//        .success(function(data, status) {
-////            console.log('status -> OK -> ' + status);
-////            console.log('DATA -> ' + data);
-//            $scope.category = data;
-//            console.log(data)
-//        })
-//        .error(function(data, status) {
-//            console.log(data);
-//            //$location.path("/login");
-//
-//        });
+    Category.query(function(cat) {
+        $scope.category = cat;
+    });
 
     $scope.submit = function() {
-        var in_data = {update: $scope.obj, id: $routeParams.operId};
-        $http.post('/crud/', angular.toJson(in_data))
-        .success(function(data, status) {
+        Post.save({update: $scope.obj, id: $routeParams.operId}, function() {
             $location.path('/');
-        })
-        .error(function(data, status) {
-            $log.warn(data);
         });
     };
 }]);
 
 app.controller('DeleteFormController',
-                ['$scope', '$http', '$routeParams', '$log', '$location',
-                function($scope, $http, $routeParams, $log, $location) {
-    $http.get('/read/', {params: {id: $routeParams.operId}})
-    .success(function(data, status) {
-        $log.debug('Success: data -> ' + data + ' :: status -> ' + status);
-//        obj = angular.fromJson(data);
-        $scope.del = data[0];
-        $log.log(data[0])
-    })
-    .error(function(data, status) {
-        $location.path('/')
-        console.log('Error: data -> ' + data + ' :: status -> ' + status);
-    });
+                ['$scope', '$http', '$routeParams', '$log', '$location', 'Post',
+                function($scope, $http, $routeParams, $log, $location, Post) {
+	Post.query({id: $routeParams.operId}, function(del) {
+		$scope.del = del[0];
+	});
 
-    $scope.submit = function() {
-//        var in_data = {id: $routeParams.operId};
-        $http.delete('/crud/', {params: {id: $routeParams.operId}})
-        .success(function(data, status) {
-            $location.path('/');
-        })
-        .error(function(data, status) {
-            $log.warn(data);
-        });
-    };
+	$scope.submit = function() {
+		Post.delete({id: $routeParams.operId}, function() {
+			$location.path('/');
+		});
+	};
 }]);
 
 app.controller('LogoutController', ['$http', '$location', function($http, $location) {

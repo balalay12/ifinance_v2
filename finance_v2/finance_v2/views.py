@@ -82,6 +82,7 @@ class Base(View):
             # TODO: 404 error
             raise 'Error'
         out_data = self.serialize_qs(qs)
+        print out_data
         return self.success_response(out_data)
 
     def get_collection(self, filter_user=False):
@@ -152,19 +153,9 @@ class Login(View):
             return HttpResponse(json.dumps(errors), status=405)
 
 
+# точка входа
 class Main(TemplateView):
     template_name = 'base.html'
-
-    def post(self, request, *args, **kwargs):
-        if request.user.is_authenticated():
-            data = {}
-            _instance = Operations.objects.filter(user=request.user.id)
-            serializer = OperationsWithCategoryCollectionSerializer()
-            data['operations'] = serializer.serialize(_instance)
-            data['name'] = request.user.username
-            return HttpResponse(json.dumps(data), content_type='application/json')
-        else:
-            return HttpResponse('Main Login Error', status='403')
 
 
 class CRUDOperations(Base):

@@ -25,37 +25,46 @@ class Base(View):
         else:
             return self.get_collection()
 
+    # TODO: сделать фильтрацию по пользователю
     def create(self, request):
         if self.create_form_class is None:
-            return HttpResponse(status=405)# TODO: error create form
+            self.failed_response(405)
         print self.data
         form = self.create_form_class(self.data['add'])
         if form.is_valid():
-            form.save(request.user.id)
+            instance = form.save(commit=True)
+            # instance.user(self.request.user.id)
+            # instance.save(commit=True)
+            print instance
             return HttpResponse()
+        else:
+            self.failed_response(405)
 
+    # TODO: сделать фильтрацию по пользователю
     def update(self, request):
         if self.update_form_class is None or not self.object_id:
-            return HttpResponse(status=405)# TODO: error update form
+            self.failed_response(405)
         try:
             instance = self.get_queryset().get(pk=self.object_id)
         except ObjectDoesNotExist:
-            return HttpResponse(status=405)# TODO: error update form
-        form = self.update_form_class(self.data['update'])
+            self.failed_response(404)
+        form = self.update_form_class(self.data['update'], instance=instance)
         if form.is_valid():
-            form.save(self.object_id)
+            form.save()
             return HttpResponse()
         else:
             # TODO: make validation error
             pass
 
+    # TODO: сделать фильтрацию по пользователю
     def remove(self, request):
         if not self.object_id:
-             return HttpResponse(status=405)
+             self.failed_response(404)
         qs = self.get_queryset().filter(pk=self.object_id, user=self.request.user.id)
         qs.delete()
         return HttpResponse()
 
+    # собираем данные из запроса
     @cached_property
     def data(self):
         _data = {}
@@ -70,21 +79,25 @@ class Base(View):
                 _data.update(data)
         return Context(_data)
 
+    # берем id из запроса
     @property
     def object_id(self):
         return self.data.get('id')
 
+    # получаем и сериализуем один обекс если есть id
+    # TODO: фильровать данные для 1 пользователя
     def get_single_item(self):
         try:
             qs = self.get_queryset().filter(pk=self.object_id)
             assert len(qs) == 1
         except AssertionError:
-            # TODO: 404 error
-            raise 'Error'
+            self.failed_response(404)
         out_data = self.serialize_qs(qs)
         print out_data
         return self.success_response(out_data)
 
+    # получаем и сериализуем все данные модели
+    # TODO: фильровать данные для 1 пользователя
     def get_collection(self, filter_user=False):
         if filter_user:
             qs = self.get_queryset().filter(user=self.request.user.id)
@@ -93,14 +106,23 @@ class Base(View):
         out_data = self.serialize_qs(qs)
         return self.success_response(out_data)
 
+    # получаем все обеекты из БД
     def get_queryset(self):
         return self.model.objects.all()
 
+    # сериализуем объект
     def serialize_qs(self, qs):
         return self.serializer.serialize(qs)
 
+    # положительный ответ сервера с данными
     def success_response(self, data):
         return HttpResponse(json.dumps(data), content_type='application/json')
+
+    # отрицательный ответ сервера с ошибкой
+    def failed_response(self, status, msg='SYSTEM ERROR!'):
+        data = {}
+        data['error'] = msg
+        return HttpResponse(json.dumps(data), status=status)
 
 
 class Reg(View):
@@ -160,8 +182,8 @@ class Main(TemplateView):
 
 class CRUDOperations(Base):
     model = Operations
-    create_form_class = forms.Create
-    update_form_class = forms.Update
+    create_form_class = forms.OperationsForm
+    update_form_class = forms.OperationsForm
 
     def get(self, request):
         self.serializer = OperationsWithCategoryCollectionSerializer()

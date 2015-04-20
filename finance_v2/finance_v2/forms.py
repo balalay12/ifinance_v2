@@ -36,29 +36,26 @@ class Reg(forms.Form):
         return user
 
 
-class Create(forms.Form):
-    date = forms.DateField()
-    money = forms.FloatField()
-    comment = forms.CharField()
-    category = forms.IntegerField()
+class OperationsForm(forms.ModelForm):
+    class Meta:
+        model = Operations
+        fields = ['money', 'date', 'comment', 'category']
 
-    def save(self, user_id):
-        q = Operations.objects.create(money=self.cleaned_data['money'],
-                                      date=self.cleaned_data['date'],
-                                      comment=self.cleaned_data['comment'],
-                                      category_id=self.cleaned_data['category'])
-        q.save()
-        q.user.add(user_id)
+    # def save(self, user_id):
+    #     q = Operations.objects.create(money=self.cleaned_data['money'],
+    #                                   date=self.cleaned_data['date'],
+    #                                   comment=self.cleaned_data['comment'],
+    #                                   category_id=self.cleaned_data['category'])
+    #     q.save()
+    #     q.user.add(user_id)
 
 
-class Update(forms.Form):
-    date = forms.DateField()
-    money = forms.FloatField()
-    comment = forms.CharField()
-    category = forms.IntegerField()
+# class Update(ModelForm):
+#     class Meta:
+#         model = Operations
 
-    def save(self, operation_id):
-        q = Operations.objects.filter(pk=operation_id).update(money=self.cleaned_data['money'],
-                                                              date=self.cleaned_data['date'],
-                                                              comment=self.cleaned_data['comment'],
-                                                              category_id=self.cleaned_data['category'])
+    # def save(self, operation_id):
+    #     q = Operations.objects.filter(pk=operation_id).update(money=self.cleaned_data['money'],
+    #                                                           date=self.cleaned_data['date'],
+    #                                                           comment=self.cleaned_data['comment'],
+    #                                                           category_id=self.cleaned_data['category'])

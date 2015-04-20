@@ -1,4 +1,4 @@
-var app = angular.module('app', ['ngRoute', 'ngResource']);
+var app = angular.module('app', ['ngRoute', 'ngResource', 'ui.bootstrap']);
 
 app.config(function($interpolateProvider) {
     $interpolateProvider.startSymbol('{$');
@@ -41,9 +41,9 @@ app.config(function($routeProvider, $locationProvider) {
         templateUrl: 'static/templates/login.html',
         controller: 'ReadFormController',
     });
-    $routeProvider.when('/logout/', {
-        controller: 'LogoutController'
-    });
+//    $routeProvider.when('/logout/', {
+//        controller: 'LogoutController'
+//    });
     $routeProvider.otherwise(
         {redirectTo: '/'}
     );
@@ -113,13 +113,45 @@ app.controller('LoginFormController', ['$scope', '$http', '$location', '$log', f
 }]);
 
 app.controller('CreateFormController',
-                ['$scope', '$location', 'Category', 'Post', 
-                function($scope, $location, Category, Post) {
+                ['$scope', '$location', '$filter', 'Category', 'Post', 
+                function($scope, $location, $filter, Category, Post) {
     Category.query(function(cat) {
         $scope.data = cat;
     }, function(errResponse) {
 //        $location.path('/')
     });
+
+    $scope.today = function() {
+        $scope.date = $filter('date')(Date.now(), 'yyyy-MM-dd');
+    };
+    $scope.today();
+
+    $scope.clear = function() {
+        $scope.date = null;
+    };
+
+    $scope.disabled = function(date, mode) {
+        return (mode === 'day' && (date.getDay() === 0 || date.getDay() === 6));
+    };
+
+    // $scope.toggleMin = function() {
+    //     $scope.midDate = $scope.minDate ? null : new Date();
+    // };
+
+    $scope.open = function($event) {
+        $event.preventDefault();
+        $event.stopPropagation();
+
+        $scope.opened = true;
+    };
+
+    $scope.dateOptions = {
+        formatYear: 'yyyy',
+        startingDay: 1
+    };
+
+    $scope.formats = ['yyyy-MM-dd'];
+    $scope.format = $scope.formats[0];
 
     $scope.submit = function() {
         var res = Post.save({add:$scope.add},function() {
@@ -161,6 +193,6 @@ app.controller('DeleteFormController',
 	};
 }]);
 
-app.controller('LogoutController', ['$http', '$location', function($http, $location) {
-    $http.get('/logout/')
-}]);
+//app.controller('LogoutController', ['$http', function($http, $location) {
+//    $http.get('/logout/');
+//}]);

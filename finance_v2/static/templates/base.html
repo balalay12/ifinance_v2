@@ -14,9 +14,12 @@
     <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
     <script src="{% static "js/bootstrap.min.js" %}" type="text/javascript"></script>
 	<script src="{% static "js/angular.js" %}" type="text/javascript"></script>
+	<script src="{% static "js/angular-resource.min.js" %}" type="text/javascript"></script>
 	<script src="{% static "js/angular-route.min.js" %}" type="text/javascript"></script>
 	<script src="{% static "js/angular-resource.min.js" %}" type="text/javascript"></script>
 	<script src="{% static "js/angular-resource.min.js.map" %}" type="text/javascript"></script>
+    <script src="{% static "js/ui-bootstrap-0.12.1.js" %}" type="text/javascript"></script>
+    <script src="{% static "js/ui-bootstrap-tpls-0.12.1.min.js" %}" type="text/javascript"></script>
 	<script src="{% static "js/controllers.js" %}" type="text/javascript"></script>
 </head>
 <body>
@@ -50,7 +53,7 @@
                     <a href="#/reg">Регистрация</a>
                 </li>
                 <li ng-if="!data.name">
-                    <a href="/logout">Выход</a>
+                    <a href="{% url 'logout' %}">Выход</a>
                 </li>
             </ul>
         </div>
@@ -70,6 +73,9 @@
 <!-- CONTENT END -->
 
 <!-- FOOTER -->
+
+<!-- TODO: footer -->
+
 <!--FOOTER END -->
 
 

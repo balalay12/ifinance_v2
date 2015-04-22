@@ -136,8 +136,8 @@ app.controller('LoginFormController', ['$scope', '$http', '$location', '$log', f
 }]);
 
 app.controller('CreateFormController',
-                ['$scope', '$location', 'Category', 'Post',
-                function($scope, $location, Category, Post) {
+                ['$scope', '$location', '$filter', 'Category', 'Post',
+                function($scope, $location, $filter, Category, Post) {
     Category.query(function(cat) {
         $scope.data = cat;
     }, function(errResponse) {
@@ -177,7 +177,10 @@ app.controller('CreateFormController',
     $scope.format = $scope.formats[0];
 
     $scope.submit = function() {
-        var res = Post.save({add:$scope.add},function() {
+        var datefilter = $filter('date'),
+            formattedDate = datefilter($scope.date, 'yyyy-MM-dd');
+        $scope.add['date'] = formattedDate;
+        Post.save({add:$scope.add},function(res) {
             $location.path('/')
         }, function(errResponse) {
             console.log(errResponse)

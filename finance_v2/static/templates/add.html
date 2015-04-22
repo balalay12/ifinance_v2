@@ -1,7 +1,8 @@
-<div class="col-lg-8 col-lg-offset-2 well well-sm">
-    <form class="form-horizontal" ng-controller="CreateFormController" name="create_form">
+<!--<div class="col-lg-8 col-lg-offset-2 well well-sm">-->
+    <div>
+        <form class="form-horizontal" ng-controller="CreateFormController" name="create_form">
         <fieldset>
-            <legend>Добавление</legend>
+            <legend class="modal-title">Добавление</legend>
 <!--             <div class="form-group">
                 <label class="col-lg-2 control-label" for="inputDate">Введите дату</label>
                 <div class="col-lg-10">
@@ -12,7 +13,7 @@
                 <label class="col-lg-2 control-label" for="inputDate">Введите дату</label>
                 <div class="col-lg-10">
                     <p class="input-group">
-              <input type="text" class="form-control" datepicker-popup="{$ format $}" ng-model="add.date" is-open="opened" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
+              <input type="text" class="form-control" datepicker-popup="{$ format $}" ng-model="add.date" is-open="opened" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" name="inputDate" id="inputDate" />
               <span class="input-group-btn">
                 <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
               </span>
@@ -44,6 +45,8 @@
                 <div class="col-lg-10 col-lg-offset-2">
                     <button class="btn btn-default" type="reset">Очистить</button>
                     <button class="btn btn-primary" ng-click="submit()" type="submit">Отправить</button>
+                    <button class="btn btn-primary" ng-click="ok()">OK</button>
+                    <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
                 </div>
             </div>
         </fieldset>

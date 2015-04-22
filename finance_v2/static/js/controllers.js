@@ -62,7 +62,30 @@ app.factory('Category', ['$resource', function($resource) {
     return $resource('/get_categorys/');
 }]);
 
-app.controller('MainController', ['$scope', '$location', 'Post',function($scope, $location, Post) {
+app.controller('MainController', ['$scope', '$location', '$modal', 'Post',function($scope, $location, $modal, Post) {
+    $scope.create = function(size) {
+        var modalInstance = $modal.open({
+        templateUrl: 'static/templates/add.html',
+        controller: 'CreateFormController',
+        size: size
+        });
+    };
+
+    $scope.update = function(size, _id) {
+        $scope.update_id = _id;
+
+        var modalInstance = $modal.open({
+            templateUrl: 'static/templates/update.html',
+            controller: 'UpdateFormController',
+            size: size,
+            resolve: {
+                update_id: function() {
+                    return $scope.update_id;
+                }
+            }
+        });
+    };
+
     var res = Post.query(function() {
         $scope.operations = res;
         console.log(res)
@@ -113,8 +136,8 @@ app.controller('LoginFormController', ['$scope', '$http', '$location', '$log', f
 }]);
 
 app.controller('CreateFormController',
-                ['$scope', '$location', '$filter', 'Category', 'Post', 
-                function($scope, $location, $filter, Category, Post) {
+                ['$scope', '$location', 'Category', 'Post',
+                function($scope, $location, Category, Post) {
     Category.query(function(cat) {
         $scope.data = cat;
     }, function(errResponse) {
@@ -122,7 +145,7 @@ app.controller('CreateFormController',
     });
 
     $scope.today = function() {
-        $scope.date = $filter('date')(Date.now(), 'yyyy-MM-dd');
+        $scope.date =  new Date();
     };
     $scope.today();
 
@@ -162,9 +185,10 @@ app.controller('CreateFormController',
     };
 }]);
 
-app.controller('UpdateFormController', ['$scope', '$routeParams', '$log', '$location', 'Post', 'Category', function($scope, $routeParams, $log, $location, Post, Category) {
+app.controller('UpdateFormController', ['$scope', '$routeParams', '$log', '$location', 'Post', 'Category', function($scope, $routeParams, $log, $location, Post, Category, $modalInstance, update_id) {
+    console.log(update_id);
 
-    Post.query({id:$routeParams.operId}, function(upd) {
+    Post.query({id:update_id}, function(upd) {
         $scope.obj = upd[0];
     });
 

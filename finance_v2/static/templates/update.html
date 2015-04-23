@@ -1,11 +1,26 @@
-<div class="col-lg-8 col-lg-offset-2 well well-sm">
+<!--<div class="col-lg-8 col-lg-offset-2 well well-sm">-->
+<div class="modal-header">
+    <h3 class="modal-title">Редактирование</h3>
+</div>
+
+<div class="modal-body">
     <form class="form-horizontal" ng-controller="UpdateFormController" name="update_form">
         <fieldset>
-            <legend>Добавление</legend>
-            <div class="form-group">
+            <!-- <div class="form-group">
                 <label class="col-lg-2 control-label" for="inputDate">Введите дату</label>
                 <div class="col-lg-10">
                     <input class="form-control" ng-model="obj.date" type="text" name="inputDate" id="inputDate" placeholder="Введите дату">
+                </div>
+            </div> -->
+            <div class="form-group">
+                <label class="col-lg-2 control-label" for="inputDate">Введите дату</label>
+                <div class="col-lg-10">
+                    <p class="input-group">
+                        <input type="text" class="form-control" datepicker-popup="{$ format $}" ng-model="obj.date" is-open="opened" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" name="inputDate" id="inputDate" />
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                        </span>
+                    </p>
                 </div>
             </div>
             <div class="form-group">
@@ -23,10 +38,10 @@
             <div class="form-group">
                 <label class="col-lg-2 control-label" for="select">Выберите категорию</label>
                 <div class="col-lg-10">
-                    <select class="form-control" name="select" id="select" ng-model="obj.category">
-                        <option>-----------------</option>
-                        <option ng-repeat="item in category" value="{$ item['operation_type'] $}">{$ item['name'] $}</option>
+                    <select class="form-control" name="select" id="select" ng-model="obj.categories">
+                        <option ng-repeat="item in categories" value="{$ item['operation_type'] $}">{$ item['name'] $}</option>
                     </select>
+                    <select class="form-control" ng-model="obj.category_id" ng-options="item.operation_type for item in categories"></select>
                 </div>
             </div>
             <div class="form-group">

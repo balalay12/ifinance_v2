@@ -62,7 +62,20 @@ app.factory('Category', ['$resource', function($resource) {
     return $resource('/get_categorys/');
 }]);
 
-app.controller('MainController', ['$scope', '$location', '$modal', 'Post',function($scope, $location, $modal, Post) {
+app.service('TransmissionId', function() {
+    var _id = '';
+
+    return {
+        setId: function(id) {
+            _id = id;
+        },
+        getId: function() {
+            return _id;
+        }
+    }
+});
+
+app.controller('MainController', ['$scope', '$location', '$modal', '$log', 'Post', 'TransmissionId', function($scope, $location, $modal, $log, Post, TransmissionId) {
     $scope.create = function(size) {
         var modalInstance = $modal.open({
         templateUrl: 'static/templates/add.html',
@@ -71,18 +84,23 @@ app.controller('MainController', ['$scope', '$location', '$modal', 'Post',functi
         });
     };
 
-    $scope.update = function(size, _id) {
-        $scope.update_id = _id;
+    $scope.update = function(_id) {
+        TransmissionId.setId(_id);
 
         var modalInstance = $modal.open({
             templateUrl: 'static/templates/update.html',
             controller: 'UpdateFormController',
-            size: size,
-            resolve: {
-                update_id: function() {
-                    return $scope.update_id;
-                }
-            }
+            size: 'lg'
+        });
+    };
+
+    $scope.delete = function(_id) {
+        TransmissionId.setId(_id);
+
+        var ModalInstance = $modal.open({
+            templateUrl: 'static/templates/delete.html',
+            controller: 'DeleteFormController',
+            size: 'lg'
         });
     };
 
@@ -139,7 +157,7 @@ app.controller('CreateFormController',
                 ['$scope', '$location', '$filter', 'Category', 'Post',
                 function($scope, $location, $filter, Category, Post) {
     Category.query(function(cat) {
-        $scope.data = cat;
+        $scope.categories = cat;
     }, function(errResponse) {
 //        $location.path('/')
     });
@@ -179,8 +197,8 @@ app.controller('CreateFormController',
     $scope.submit = function() {
         var datefilter = $filter('date'),
             formattedDate = datefilter($scope.date, 'yyyy-MM-dd');
-        $scope.add['date'] = formattedDate;
-        Post.save({add:$scope.add},function(res) {
+        $scope.obj['date'] = formattedDate;
+        Post.save({add:$scope.obj},function(res) {
             $location.path('/')
         }, function(errResponse) {
             console.log(errResponse)
@@ -188,8 +206,9 @@ app.controller('CreateFormController',
     };
 }]);
 
-app.controller('UpdateFormController', ['$scope', '$routeParams', '$log', '$location', 'Post', 'Category', function($scope, $routeParams, $log, $location, Post, Category, $modalInstance, update_id) {
-    console.log(update_id);
+app.controller('UpdateFormController', ['$scope', '$routeParams', '$log', '$location', 'Post', 'Category', 'TransmissionId', function($scope, $routeParams, $log, $location, Post, Category, TransmissionId) {
+
+    var update_id = TransmissionId.getId();
 
     Post.query({id:update_id}, function(upd) {
         $scope.obj = upd[0];
@@ -200,21 +219,24 @@ app.controller('UpdateFormController', ['$scope', '$routeParams', '$log', '$loca
     });
 
     $scope.submit = function() {
-        Post.save({update: $scope.obj, id: $routeParams.operId}, function() {
+        Post.save({update: $scope.obj, id: update_id}, function() {
             $location.path('/');
         });
     };
 }]);
 
 app.controller('DeleteFormController',
-                ['$scope', '$http', '$routeParams', '$log', '$location', 'Post',
-                function($scope, $http, $routeParams, $log, $location, Post) {
-	Post.query({id: $routeParams.operId}, function(del) {
+                ['$scope', '$http', '$routeParams', '$log', '$location', '$modal', 'Post', 'TransmissionId',
+                function($scope, $http, $routeParams, $log, $location, $modal, Post, TransmissionId) {
+	
+    var delete_id = TransmissionId.getId();
+
+    Post.query({id: delete_id}, function(del) {
 		$scope.del = del[0];
 	});
 
 	$scope.submit = function() {
-		Post.delete({id: $routeParams.operId}, function() {
+		Post.delete({id: delete_id}, function(del) {
 			$location.path('/');
 		});
 	};

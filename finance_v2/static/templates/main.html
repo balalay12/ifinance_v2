@@ -12,11 +12,11 @@
     </thead>
     <tbody>
         <tr ng-repeat="oper in operations">
-            <td><a ng-click="update(lg, oper.id)"">{$ oper.date $}</a></td>
+            <td><a ng-click="update(oper.id)">{$ oper.date $}</a></td>
             <td>{$ oper.money $}</td>
             <td>{$ oper.category $}</td>
             <td>{$ oper.comment $}</td>
-            <td><a class="btn btn-danger" href="#/delete/{$ oper.id $}">Удалить</a></td>
+            <td><a class="btn btn-danger" ng-click="delete(oper.id)">Удалить</a></td>
         </tr>
     </tbody>
 </table>

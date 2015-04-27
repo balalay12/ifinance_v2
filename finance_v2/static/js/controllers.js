@@ -175,9 +175,65 @@ app.controller('CreateFormController',
         return (mode === 'day' && (date.getDay() === 0 || date.getDay() === 6));
     };
 
-    // $scope.toggleMin = function() {
-    //     $scope.midDate = $scope.minDate ? null : new Date();
-    // };
+    $scope.toggleMin = function() {
+         $scope.midDate = $scope.minDate ? null : new Date();
+    };
+
+    $scope.open = function($event) {
+        $event.preventDefault();
+        $event.stopPropagation();
+
+        $scope.opened = true;
+    };
+
+    $scope.dateOptions = {
+        formatYear: 'yyyy',
+        startingDay: 1
+    };
+
+    $scope.formats = ['yyyy-MM-dd'];
+    $scope.format = $scope.formats[0];
+
+    $scope.submit = function() {
+        var datefilter = $filter('date'),
+            formattedDate = datefilter($scope.date, 'yyyy-MM-dd');
+        $scope.add['date'] = formattedDate;
+        Post.save({add:$scope.add},function(res) {
+            $location.path('/')
+        }, function(errResponse) {
+            console.log(errResponse)
+        });
+    };
+}]);
+
+app.controller('UpdateFormController', ['$scope', '$routeParams', '$log', '$location', '$filter', 'Post', 'Category', 'TransmissionId', function($scope, $routeParams, $log, $location, $filter, Post, Category, TransmissionId) {
+
+    var update_id = TransmissionId.getId();
+
+    Post.query({id:update_id}, function(upd) {
+        $scope.obj = upd[0];
+    });
+
+    Category.query(function(cat) {
+        $scope.categories = cat;
+    });
+
+    $scope.today = function() {
+        $scope.date =  new Date();
+    };
+    $scope.today();
+
+    $scope.clear = function() {
+        $scope.date = null;
+    };
+
+    $scope.disabled = function(date, mode) {
+        return (mode === 'day' && (date.getDay() === 0 || date.getDay() === 6));
+    };
+
+    $scope.toggleMin = function() {
+         $scope.midDate = $scope.minDate ? null : new Date();
+    };
 
     $scope.open = function($event) {
         $event.preventDefault();
@@ -198,27 +254,6 @@ app.controller('CreateFormController',
         var datefilter = $filter('date'),
             formattedDate = datefilter($scope.date, 'yyyy-MM-dd');
         $scope.obj['date'] = formattedDate;
-        Post.save({add:$scope.obj},function(res) {
-            $location.path('/')
-        }, function(errResponse) {
-            console.log(errResponse)
-        });
-    };
-}]);
-
-app.controller('UpdateFormController', ['$scope', '$routeParams', '$log', '$location', 'Post', 'Category', 'TransmissionId', function($scope, $routeParams, $log, $location, Post, Category, TransmissionId) {
-
-    var update_id = TransmissionId.getId();
-
-    Post.query({id:update_id}, function(upd) {
-        $scope.obj = upd[0];
-    });
-
-    Category.query(function(cat) {
-        $scope.category = cat;
-    });
-
-    $scope.submit = function() {
         Post.save({update: $scope.obj, id: update_id}, function() {
             $location.path('/');
         });

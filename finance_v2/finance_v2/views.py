@@ -73,6 +73,7 @@ class Base(View):
                 pass
             else:
                 _data.update(data)
+        print(_data)
         return Context(_data)
 
     # берем id из запроса

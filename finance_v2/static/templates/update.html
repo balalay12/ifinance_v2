@@ -1,10 +1,11 @@
 <!--<div class="col-lg-8 col-lg-offset-2 well well-sm">-->
+<form class="form-horizontal" ng-controller="UpdateFormController" name="update_form">
 <div class="modal-header">
     <h3 class="modal-title">Редактирование</h3>
 </div>
 
 <div class="modal-body">
-    <form class="form-horizontal" ng-controller="UpdateFormController" name="update_form">
+    <!--<form class="form-horizontal" ng-controller="UpdateFormController" name="update_form">-->
         <fieldset>
             <!-- <div class="form-group">
                 <label class="col-lg-2 control-label" for="inputDate">Введите дату</label>
@@ -38,18 +39,24 @@
             <div class="form-group">
                 <label class="col-lg-2 control-label" for="select">Выберите категорию</label>
                 <div class="col-lg-10">
-                    <select class="form-control" name="select" id="select" ng-model="obj.categories">
+                    <select class="form-control" name="select" id="select" ng-model="obj.category">
                         <option ng-repeat="item in categories" value="{$ item['operation_type'] $}">{$ item['name'] $}</option>
                     </select>
-                    <select class="form-control" ng-model="obj.category_id" ng-options="item.operation_type for item in categories"></select>
+                    <!--<select class="form-control" ng-model="obj.category" ng-options="item.name for item in categories"></select>-->
                 </div>
             </div>
-            <div class="form-group">
-                <div class="col-lg-10 col-lg-offset-2">
-                    <button class="btn btn-default" type="reset">Очистить</button>
-                    <button class="btn btn-primary" ng-click="submit()" type="submit">Отправить</button>
-                </div>
-            </div>
+            <!--<div class="form-group">-->
+                <!--<div class="col-lg-10 col-lg-offset-2">-->
+                    <!--<button class="btn btn-default" type="reset">Очистить</button>-->
+                    <!--<button class="btn btn-primary" ng-click="submit()" type="submit">Отправить</button>-->
+                <!--</div>-->
+            <!--</div>-->
         </fieldset>
-	</form>
+	<!--</form>-->
 </div>
+
+<div class="modal-footer">
+    <button class="btn btn-default" type="reset">Очистить</button>
+    <button class="btn btn-primary" ng-click="submit()" type="submit">Отправить</button>
+</div>
+</form>

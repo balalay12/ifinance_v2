@@ -25,25 +25,6 @@ app.config(function($routeProvider, $locationProvider) {
         templateUrl: 'static/templates/login.html',
         controller: 'LoginFormController'
     });
-    $routeProvider.when('/add/', {
-        templateUrl: 'static/templates/add.html',
-        controller: 'CreateFormController'
-    });
-    $routeProvider.when('/update/:operId', {
-        templateUrl: 'static/templates/update.html',
-        controller: 'UpdateFormController',
-    });
-    $routeProvider.when('/delete/:operId', {
-        templateUrl: 'static/templates/delete.html',
-        controller: 'DeleteFormController',
-    });
-    $routeProvider.when('/read/', {
-        templateUrl: 'static/templates/login.html',
-        controller: 'ReadFormController',
-    });
-//    $routeProvider.when('/logout/', {
-//        controller: 'LogoutController'
-//    });
     $routeProvider.otherwise(
         {redirectTo: '/'}
     );
@@ -165,7 +146,7 @@ app.controller('CreateFormController',
     $scope.today = function() {
         $scope.date =  new Date();
     };
-    $scope.today();
+    // $scope.today();
 
     $scope.clear = function() {
         $scope.date = null;
@@ -176,7 +157,7 @@ app.controller('CreateFormController',
     };
 
     $scope.toggleMin = function() {
-         $scope.midDate = $scope.minDate ? null : new Date();
+         $scope.minDate = $scope.minDate ? null : new Date();
     };
 
     $scope.open = function($event) {
@@ -195,9 +176,10 @@ app.controller('CreateFormController',
     $scope.format = $scope.formats[0];
 
     $scope.submit = function() {
-        var datefilter = $filter('date'),
-            formattedDate = datefilter($scope.date, 'yyyy-MM-dd');
-        $scope.add['date'] = formattedDate;
+        // var datefilter = $filter('date'),
+            // formattedDate = datefilter($scope.date, 'yyyy-MM-dd');
+
+        $scope.add['date'] = $filter('date')($scope.add['date'], 'yyyy-MM-dd'); //formattedDate;
         Post.save({add:$scope.add},function(res) {
             $location.path('/')
         }, function(errResponse) {
@@ -221,7 +203,6 @@ app.controller('UpdateFormController', ['$scope', '$routeParams', '$log', '$loca
     $scope.today = function() {
         $scope.date =  new Date();
     };
-    $scope.today();
 
     $scope.clear = function() {
         $scope.date = null;
@@ -232,7 +213,7 @@ app.controller('UpdateFormController', ['$scope', '$routeParams', '$log', '$loca
     };
 
     $scope.toggleMin = function() {
-         $scope.midDate = $scope.minDate ? null : new Date();
+         $scope.minDate = $scope.minDate ? null : new Date();
     };
 
     $scope.open = function($event) {
@@ -251,9 +232,9 @@ app.controller('UpdateFormController', ['$scope', '$routeParams', '$log', '$loca
     $scope.format = $scope.formats[0];
 
     $scope.submit = function() {
-        var datefilter = $filter('date'),
-            formattedDate = datefilter($scope.date, 'yyyy-MM-dd');
-        $scope.obj['date'] = formattedDate;
+        // var datefilter = $filter('date'),
+            // formattedDate = datefilter($scope.date, 'yyyy-MM-dd');
+        $scope.obj['date'] = $filter('date')($scope.obj['date'], 'yyyy-MM-dd');//formattedDate;
         Post.save({update: $scope.obj, id: update_id}, function() {
             $location.path('/');
         });

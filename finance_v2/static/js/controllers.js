@@ -58,7 +58,7 @@ app.service('TransmissionId', function() {
 
 app.controller('MainController', ['$scope', '$location', '$modal', '$log', 'Post', 'TransmissionId', function($scope, $location, $modal, $log, Post, TransmissionId) {
     $scope.create = function(size) {
-        var modalInstance = $modal.open({
+        var modalCreate = $modal.open({
         templateUrl: 'static/templates/add.html',
         controller: 'CreateFormController',
         size: size
@@ -71,7 +71,7 @@ app.controller('MainController', ['$scope', '$location', '$modal', '$log', 'Post
         var modalInstance = $modal.open({
             templateUrl: 'static/templates/update.html',
             controller: 'UpdateFormController',
-            size: 'lg'
+            // size: 'sm'
         });
     };
 
@@ -81,7 +81,7 @@ app.controller('MainController', ['$scope', '$location', '$modal', '$log', 'Post
         var ModalInstance = $modal.open({
             templateUrl: 'static/templates/delete.html',
             controller: 'DeleteFormController',
-            size: 'lg'
+            // size: 'sm'
         });
     };
 
@@ -232,9 +232,7 @@ app.controller('UpdateFormController', ['$scope', '$routeParams', '$log', '$loca
     $scope.format = $scope.formats[0];
 
     $scope.submit = function() {
-        // var datefilter = $filter('date'),
-            // formattedDate = datefilter($scope.date, 'yyyy-MM-dd');
-        $scope.obj['date'] = $filter('date')($scope.obj['date'], 'yyyy-MM-dd');//formattedDate;
+        $scope.obj['date'] = $filter('date')($scope.obj['date'], 'yyyy-MM-dd');
         Post.save({update: $scope.obj, id: update_id}, function() {
             $location.path('/');
         });

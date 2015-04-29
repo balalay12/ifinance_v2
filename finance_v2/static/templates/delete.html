@@ -1,5 +1,11 @@
-<div class="col-lg-8 col-lg-offset-2 well well-sm">
-    <form class="form-horizontal" ng-controller="DeleteFormController" name="delete_form">
+<!-- <div class="col-lg-8 col-lg-offset-2 well well-sm"> -->
+<form class="form-horizontal" ng-controller="DeleteFormController" name="delete_form">
+<div class="modal-header">
+    <h3 class="modal-title">
+        удаление
+    </h3>
+</div>
+<div class="modal-body">
         <fieldset>
             <legend>Добавление</legend>
             <div class="form-group">
@@ -26,12 +32,15 @@
                     <input class="form-control" ng-model="del.category" type="text" id="inputCategory" placeholder="Введите описание" disabled="" />
                 </div>
             </div>
-            <div class="form-group">
+            <!-- <div class="form-group">
                 <div class="col-lg-10 col-lg-offset-2">
                     <a class="btn btn-default" href="#/">Нет</a>
                     <button class="btn btn-primary" ng-click="submit()" type="submit">Удалить?</button>
                 </div>
-            </div>
+            </div> -->
         </fieldset>
-	</form>
 </div>
+<div class="modal-footer">
+    <button class="btn btn-primary" ng-click="submit()" type="submit">Удалить?</button>
+</div>
+</form>
